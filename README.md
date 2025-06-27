@@ -1,0 +1,2 @@
+# hazardinfo-linebot
+ハザードマップ情報を取得して回答するLINEチャットボット
