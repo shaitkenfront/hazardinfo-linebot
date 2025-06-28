@@ -21,6 +21,19 @@ WMS_LAYERS = {
     '大規模盛土造成地': 'morido_daikibo',
 }
 
+# 浸水深タイルの色と浸水深の対応マップ
+# 今後、ユーザーから提供されるRGB値を追加していく
+INUNDATION_COLOR_MAP = {
+    (220,122,220): "20m以上",
+    (242,133,201):"10m以上20m未満",
+    (255,145,145):"5m以上10m未満",
+    (255,183,183):"3m以上5m未満",
+    (255,216,192):"0.5m以上3m未満",
+    (248,225,166):"0.5m以上1m未満",
+    (247,245,169):"0.5m未満",
+    (255,255,179):"0.3m未満"
+}
+
 def _format_jshis_probability(prob_value) -> str:
     """
     J-SHISから取得した確率値をフォーマットする。
@@ -119,33 +132,15 @@ def get_inundation_depth_from_gsi_tile(lat: float, lon: float) -> str:
         img = Image.open(BytesIO(response.content))
         
         # 画像のピクセルデータを取得
-        # 浸水深タイルはRGBA形式で、A(アルファ)値が浸水深を表すことが多い
-        # 国土地理院の仕様書を確認し、正確なピクセル値と浸水深の対応を実装する必要がある
-        # ここでは簡易的にアルファ値から浸水深を判定する
         r, g, b, a = img.getpixel((px, py))
+        pixel_rgb = (r, g, b)
 
-        # 国土地理院の浸水深タイルの凡例に基づく簡易的な判定
-        # 凡例: https://www.gsi.go.jp/bousai/bousai_hazardmap_suigai.html
-        # 0: 浸水なし
-        # 1-25: 0.5m未満
-        # 26-50: 0.5m以上3.0m未満
-        # 51-75: 3.0m以上5.0m未満
-        # 76-100: 5.0m以上10.0m未満
-        # 101-255: 10.0m以上
-
-        if a == 0:
+        if pixel_rgb in INUNDATION_COLOR_MAP:
+            return INUNDATION_COLOR_MAP[pixel_rgb]
+        elif a == 0:
             return "浸水なし"
-        elif 1 <= a <= 25:
-            return "0.5m未満"
-        elif 26 <= a <= 50:
-            return "0.5m以上3.0m未満"
-        elif 51 <= a <= 75:
-            return "3.0m以上5.0m未満"
-        elif 76 <= a <= 100:
-            return "5.0m以上10.0m未満"
-        elif 101 <= a <= 255:
-            return "10.0m以上"
         else:
+            # 該当する色がない場合、または透明度が0でないが浸水深が不明な場合
             return "情報なし"
 
     except requests.exceptions.RequestException as e:
