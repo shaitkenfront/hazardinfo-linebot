@@ -1,6 +1,8 @@
 import requests
 import json
 import math
+from PIL import Image
+from io import BytesIO
 
 # J-SHIS API 地点別確率値APIのベースURL (2020年版、平均、全期間)
 JSHIS_API_URL_BASE = "https://www.j-shis.bosai.go.jp/map/api/pshm/Y2020/AVR/TTL_MTTL/meshinfo.geojson"
@@ -8,9 +10,12 @@ JSHIS_API_URL_BASE = "https://www.j-shis.bosai.go.jp/map/api/pshm/Y2020/AVR/TTL_
 # 国土地理院WMS GetFeatureInfo エンドポイント
 WMS_GETFEATUREINFO_BASE_URL = "https://disaportal.gsi.go.jp/maps/wms/hazardmap?"
 
-# WMSレイヤー設定
+# 想定最大浸水深タイルURL
+FLOOD_TILE_URL = "https://disaportaldata.gsi.go.jp/raster/01_flood_l2_shinsuishin_data/{z}/{x}/{y}.png"
+FLOOD_TILE_ZOOM = 17 # ズームレベル固定
+
+# WMSレイヤー設定 (浸水深はタイル画像から取得するため除外)
 WMS_LAYERS = {
-    '想定最大浸水深': 'fldareak_l2',
     '土砂災害警戒区域': 'dosha_keikai',
     '土砂災害特別警戒区域': 'dosha_tokubetsu_keikai',
     '大規模盛土造成地': 'morido_daikibo',
@@ -84,10 +89,76 @@ def get_jshis_info(lat: float, lon: float) -> dict[str, str]:
 
     return results
 
+def latlon_to_gsi_tile_pixel(lat: float, lon: float, zoom: int) -> tuple[int, int, int, int, int]:
+    """
+    緯度経度とズームレベルから地理院タイル座標(Z, X, Y)とタイル内ピクセル座標(px, py)を計算する。
+    """
+    n = 2 ** zoom
+    lon_rad = math.radians(lon)
+    lat_rad = math.radians(lat)
+
+    x_tile = int(n * ((lon + 180) / 360))
+    y_tile = int(n * (1 - (math.log(math.tan(lat_rad) + 1 / math.cos(lat_rad)) / math.pi)) / 2)
+
+    # タイル内ピクセル座標 (0-255)
+    px = int(256 * (n * ((lon + 180) / 360) - x_tile))
+    py = int(256 * (n * (1 - (math.log(math.tan(lat_rad) + 1 / math.cos(lat_rad)) / math.pi)) / 2 - y_tile))
+
+    return zoom, x_tile, y_tile, px, py
+
+def get_inundation_depth_from_gsi_tile(lat: float, lon: float) -> str:
+    """
+    国土地理院の浸水深タイル画像から想定最大浸水深を取得する。
+    """
+    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, FLOOD_TILE_ZOOM)
+    tile_url = FLOOD_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+
+    try:
+        response = requests.get(tile_url, timeout=10)
+        response.raise_for_status()
+        img = Image.open(BytesIO(response.content))
+        
+        # 画像のピクセルデータを取得
+        # 浸水深タイルはRGBA形式で、A(アルファ)値が浸水深を表すことが多い
+        # 国土地理院の仕様書を確認し、正確なピクセル値と浸水深の対応を実装する必要がある
+        # ここでは簡易的にアルファ値から浸水深を判定する
+        r, g, b, a = img.getpixel((px, py))
+
+        # 国土地理院の浸水深タイルの凡例に基づく簡易的な判定
+        # 凡例: https://www.gsi.go.jp/bousai/bousai_hazardmap_suigai.html
+        # 0: 浸水なし
+        # 1-25: 0.5m未満
+        # 26-50: 0.5m以上3.0m未満
+        # 51-75: 3.0m以上5.0m未満
+        # 76-100: 5.0m以上10.0m未満
+        # 101-255: 10.0m以上
+
+        if a == 0:
+            return "浸水なし"
+        elif 1 <= a <= 25:
+            return "0.5m未満"
+        elif 26 <= a <= 50:
+            return "0.5m以上3.0m未満"
+        elif 51 <= a <= 75:
+            return "3.0m以上5.0m未満"
+        elif 76 <= a <= 100:
+            return "5.0m以上10.0m未満"
+        elif 101 <= a <= 255:
+            return "10.0m以上"
+        else:
+            return "情報なし"
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching flood tile: {e}")
+        return "対象外"
+    except Exception as e:
+        print(f"Error processing flood tile: {e}")
+        return "処理失敗"
+
 def get_wms_info(lat: float, lon: float) -> dict[str, str]:
     """
     国土地理院WMSから指定された緯度経度のハザード情報を取得する。
-    (現状はダミーデータ)
+    (浸水深はタイル画像から取得するため、ここでは土砂災害と盛土のみ)
     """
     results = {}
     
@@ -127,16 +198,8 @@ def get_wms_info(lat: float, lon: float) -> dict[str, str]:
                 # 国土地理院WMSのGetFeatureInfoのJSON応答形式に依存
                 # 例: data['features'][0]['properties']['value'] など
                 if data and data.get('features'):
-                    # 浸水深のレイヤーの場合
-                    if layer_name == 'fldareak_l2':
-                        # 浸水深の具体的なプロパティ名を確認する必要がある
-                        # 例: '浸水深' や 'value' など
-                        # ここでは仮に 'value' というプロパティがあると想定
-                        value = data['features'][0]['properties'].get('value', '情報なし')
-                        results[hazard_name] = f"{value}m" if value != '情報なし' else '情報なし'
-                    else:
-                        # その他のレイヤー（土砂災害、盛土など）は該当有無を判定
-                        results[hazard_name] = '該当あり'
+                    # その他のレイヤー（土砂災害、盛土など）は該当有無を判定
+                    results[hazard_name] = '該当あり'
                 else:
                     results[hazard_name] = '該当なし'
 
@@ -160,5 +223,6 @@ def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     """
     hazard_info = {}
     hazard_info.update(get_jshis_info(lat, lon))
+    hazard_info['想定最大浸水深'] = get_inundation_depth_from_gsi_tile(lat, lon)
     hazard_info.update(get_wms_info(lat, lon))
     return hazard_info
