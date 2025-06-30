@@ -3,6 +3,8 @@ import json
 import math
 from PIL import Image
 from io import BytesIO
+from shapely.geometry import shape, Point
+from app import geocoding, geojsonhelper
 
 # J-SHIS API 地点別確率値APIのベースURL (2020年版、平均、全期間)
 JSHIS_API_URL_BASE = "https://www.j-shis.bosai.go.jp/map/api/pshm/Y2020/AVR/TTL_MTTL/meshinfo.geojson"
@@ -31,8 +33,14 @@ TSUNAMI_TILE_URL = "https://disaportaldata.gsi.go.jp/raster/04_tsunami_newlegend
 TSUNAMI_TILE_ZOOM = 17 # ズームレベル固定
 
 # 高潮浸水想定タイルURL
-HIGH_TIDE_TILE_URL = "	https://disaportaldata.gsi.go.jp/raster/03_hightide_l2_shinsuishin_data/{z}/{x}/{y}.png"
+HIGH_TIDE_TILE_URL = "https://disaportaldata.gsi.go.jp/raster/03_hightide_l2_shinsuishin_data/{z}/{x}/{y}.png"
 HIGH_TIDE_TILE_ZOOM = 17 # ズームレベル固定
+
+# 大規模盛土造成地
+S3_LARGE_FILL_LAND_BUCKET = "linebot-hazardinfo-storage-2be2654c-2c7c-001f-a2e7-fadd69e05d62"
+S3_LARGE_FILL_LAND_FOLDER = "A54-23_GEOJSON"
+S3_LARGE_FILL_LAND_FILE_PREFIX = "A54-23_"
+
 
 # 浸水深タイルの色と浸水深の対応マップ
 INUNDATION_COLOR_MAP = {
@@ -360,6 +368,29 @@ def get_landslide_info_from_gsi_tile(lat: float, lon: float) -> str:
     except Exception as e:
         print(f"Error processing landslide tile: {e}")
         return "処理失敗"
+    
+def get_large_scale_filled_land_info_from_geojson(lat: float, lon: float) -> str:
+    """
+    国土地理院の大規模盛土造成地情報をS3から取得する。
+    """
+    # 緯度経度から都道府県番号を計算
+    pref_code = geocoding.get_pref_code(lat, lon)
+    point = Point(lon, lat)
+
+    # S3からGeoJSONファイルを取得
+    s3_key = f"{S3_LARGE_FILL_LAND_FOLDER}/{S3_LARGE_FILL_LAND_FILE_PREFIX}{pref_code}.geojson"
+    
+    try:
+        geojson = geojsonhelper.load_large_geojson(S3_LARGE_FILL_LAND_BUCKET, s3_key)
+        if geojson:
+            for feature in geojson["features"]:
+                if shape(feature["geometry"]).contains(point):
+                    return "あり"
+    except Exception as e:
+        print(f"Error fetching large scale filled land info: {e}")
+        return "情報なし"
+
+    return "情報なし"
 
 def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     """
@@ -386,7 +417,7 @@ def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     hazard_info['土砂災害警戒・特別警戒区域'] = ''
     hazard_info['津波浸水想定'] = get_tsunami_inundation_info_from_gsi_tile(lat, lon)
     hazard_info['高潮浸水想定'] = get_high_tide_inundation_info_from_gsi_tile(lat, lon)
-    hazard_info['大規模盛土造成地'] = '未実装' #get_large-scale_filled_land_info_from_gsi_tile(lat, lon)
+    hazard_info['大規模盛土造成地'] = get_large_scale_filled_land_info_from_geojson(lat, lon)
     
     # 個別の土砂災害情報を取得
     debris_flow_status = get_debris_flow_info_from_gsi_tile(lat, lon)
