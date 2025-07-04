@@ -206,7 +206,7 @@ def _format_hazard_output_string(max_val, center_val, no_data_str: str = 'デー
         return no_data_str
     
     # 常に2行形式で出力
-    return f"周辺100mの最大: {max_val_display}\n中心点: {center_val_display}"
+    return f" 周辺100mの最大: {max_val_display}\n 中心点: {center_val_display}"
 
 def _get_and_format_hazard_info(getter_func, max_key: str, center_key: str, formatter_func=None, no_data_str: str = 'データなし') -> str:
     """
@@ -408,28 +408,45 @@ def get_landslide_info_from_gsi_tile(lat: float, lon: float) -> dict:
     """
     return _get_max_info_from_tile(lat, lon, LANDSLIDE_TILE_URL, LANDSLIDE_TILE_ZOOM, LANDSLIDE_COLOR_MAP, "該当なし")
     
-def get_large_scale_filled_land_info_from_geojson(lat: float, lon: float) -> str:
+def get_large_scale_filled_land_info_from_geojson(lat: float, lon: float) -> dict:
     """
-    国土地理院の大規模盛土造成地情報をS3から取得する。
+    国土地理院の大規模盛土造成地情報をS3から取得し、中心点と半径100m以内の最大値を取得する。
     """
-    # 緯度経度から都道府県番号を計算
-    pref_code = geocoding.get_pref_code(lat, lon)
-    point = Point(lon, lat)
+    search_points = _get_points_in_radius(lat, lon, 100)
 
-    # S3からGeoJSONファイルを取得
-    s3_key = f"{S3_LARGE_FILL_LAND_FOLDER}/{S3_LARGE_FILL_LAND_FILE_PREFIX}{pref_code}.geojson"
-    
-    try:
-        geojson = geojsonhelper.load_large_geojson(S3_LARGE_FILL_LAND_BUCKET, s3_key)
-        if geojson:
-            for feature in geojson["features"]:
-                if shape(feature["geometry"]).contains(point):
-                    return "あり"
-    except Exception as e:
-        print(f"Error fetching large scale filled land info: {e}")
-        return "情報なし"
+    max_info = {"description": "情報なし", "weight": 0}
+    center_info = {"description": "情報なし", "weight": 0}
 
-    return "情報なし"
+    for i, (p_lat, p_lon) in enumerate(search_points):
+        is_center_point = (i == 0)
+        
+        # 緯度経度から都道府県番号を計算
+        pref_code = geocoding.get_pref_code(p_lat, p_lon)
+        point = Point(p_lon, p_lat)
+
+        # S3からGeoJSONファイルを取得
+        s3_key = f"{S3_LARGE_FILL_LAND_FOLDER}/{S3_LARGE_FILL_LAND_FILE_PREFIX}{pref_code}.geojson"
+        
+        current_info = {"description": "情報なし", "weight": 0}
+        try:
+            geojson = geojsonhelper.load_large_geojson(S3_LARGE_FILL_LAND_BUCKET, s3_key)
+            if geojson:
+                for feature in geojson["features"]:
+                    if shape(feature["geometry"]).contains(point):
+                        current_info = {"description": "あり", "weight": 1}
+                        break
+        except Exception as e:
+            print(f"Error fetching large scale filled land info for point ({p_lat}, {p_lon}): {e}")
+            if is_center_point:
+                center_info = {"description": "処理失敗", "weight": -1}
+                
+        if is_center_point:
+            center_info = current_info
+
+        if current_info["weight"] > max_info["weight"]:
+            max_info = current_info
+
+    return {"max_info": max_info["description"], "center_info": center_info["description"]}
 
 def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     """
@@ -471,7 +488,10 @@ def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
 
     # 国土地理院の大規模盛土造成地情報を取得
     print(f"Fetching large scale filled land info for lat: {lat}, lon: {lon}")
-    hazard_info['大規模盛土造成地'] = get_large_scale_filled_land_info_from_geojson(lat, lon)
+    hazard_info['大規模盛土造成地'] = _get_and_format_hazard_info(
+        lambda: get_large_scale_filled_land_info_from_geojson(lat, lon),
+        'max_info', 'center_info', no_data_str="情報なし"
+    )
     
     # 国土地理院の土砂災害ハザード情報を取得
     print(f"Fetching landslide hazard info for lat: {lat}, lon: {lon}")
