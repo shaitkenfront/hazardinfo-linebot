@@ -44,127 +44,141 @@ S3_LARGE_FILL_LAND_FILE_PREFIX = "A54-23_"
 
 # 浸水深タイルの色と浸水深の対応マップ
 INUNDATION_COLOR_MAP = {
-    (220,122,220): "20m以上",
-    (242,133,201):"10m以上20m未満",
-    (255,145,145):"5m以上10m未満",
-    (255,183,183):"3m以上5m未満",
-    (255,216,192):"0.5m以上3m未満",
-    (248,225,166):"0.5m以上1m未満",
-    (247,245,169):"0.5m未満",
-    (255,255,179):"0.3m未満"
+    (220,122,220): {"description": "20m以上", "weight": 20},
+    (242,133,201): {"description": "10m以上20m未満", "weight": 10},
+    (255,145,145): {"description": "5m以上10m未満", "weight": 5},
+    (255,183,183): {"description": "3m以上5m未満", "weight": 3},
+    (255,216,192): {"description": "0.5m以上3m未満", "weight": 1.0},
+    (248,225,166): {"description": "0.5m以上1m未満", "weight": 0.5},
+    (247,245,169): {"description": "0.5m未満", "weight": 0.4},
+    (255,255,179): {"description": "0.3m未満", "weight": 0.2}
 }
 
 # 土石流警戒区域・特別警戒区域タイルの色と浸水深の対応マップ
 DEBRIS_FLOW_COLOR_MAP = {
-    (165, 0, 33): "土石流特別警戒区域",
-    (230, 200, 50): "土石流警戒区域"
+    (165, 0, 33): {"description": "土石流(特別警戒)", "weight": 2},
+    (230, 200, 50): {"description": "土石流", "weight": 1}
 }
 
 # 急傾斜地の崩壊警戒区域タイルの色と浸水深の対応マップ
 STEEP_SLOPE_COLOR_MAP = {
-    (250, 40, 0): "特別警戒区域",
-    (250, 230, 0): "警戒区域"
+    (250, 40, 0): {"description": "急傾斜地(特別警戒)", "weight": 2},
+    (250, 230, 0): {"description": "急傾斜地", "weight": 1}
 }
 
 # 地すべり警戒区域タイルの色と浸水深の対応マップ
 LANDSLIDE_COLOR_MAP = {
-    (180, 0, 40): "特別警戒区域",
-    (255, 153, 0): "警戒区域"
+    (180, 0, 40): {"description": "地すべり(特別警戒)", "weight": 2},
+    (255, 153, 0): {"description": "地すべり", "weight": 1}
 }
 
 # 津波浸水想定タイルの色と浸水深の対応マップ
 TSUNAMI_COLOR_MAP = {
-    (220, 122, 220): "20m以上",
-    (242, 133, 201): "10m以上20m未満",
-    (255, 145, 145): "5m以上10m未満",
-    (255, 183, 183): "3m以上5m未満",
-    (255, 216, 192): "0.5m以上3m未満",
-    (248, 225, 166): "0.5m以上1m未満",
-    (247, 245, 169): "0.5m未満",
-    (255, 255, 179): "0.3m未満"
+    (220, 122, 220): {"description": "20m以上", "weight": 20},
+    (242, 133, 201): {"description": "10m以上20m未満", "weight": 10},
+    (255, 145, 145): {"description": "5m以上10m未満", "weight": 5},
+    (255, 183, 183): {"description": "3m以上5m未満", "weight": 3},
+    (255, 216, 192): {"description": "0.5m以上3m未満", "weight": 1.0},
+    (248, 225, 166): {"description": "0.5m以上1m未満", "weight": 0.5},
+    (247, 245, 169): {"description": "0.5m未満", "weight": 0.4},
+    (255, 255, 179): {"description": "0.3m未満", "weight": 0.2}
 }
 
 # 高潮浸水想定タイルの色と浸水深の対応マップ
 HIGH_TIDE_COLOR_MAP = {
-    (220, 122, 220): "20m以上",
-    (242, 133, 201): "10m以上20m未満",
-    (255, 145, 145): "5m以上10m未満",
-    (255, 183, 183): "3m以上5m未満",
-    (255, 216, 192): "0.5m以上3m未満",
-    (248, 225, 166): "0.5m以上1m未満",
-    (247, 245, 169): "0.5m未満",
-    (255, 255, 179): "0.3m未満"
+    (220, 122, 220): {"description": "20m以上", "weight": 20},
+    (242, 133, 201): {"description": "10m以上20m未満", "weight": 10},
+    (255, 145, 145): {"description": "5m以上10m未満", "weight": 5},
+    (255, 183, 183): {"description": "3m以上5m未満", "weight": 3},
+    (255, 216, 192): {"description": "0.5m以上3m未満", "weight": 1.0},
+    (248, 225, 166): {"description": "0.5m以上1m未満", "weight": 0.5},
+    (247, 245, 169): {"description": "0.5m未満", "weight": 0.4},
+    (255, 255, 179): {"description": "0.3m未満", "weight": 0.2}
 }
 
 # 洪水浸水想定区域タイルの色と浸水深の対応マップ
 FLOOD_INUNDATION_COLOR_MAP = {
-    (220, 122, 220): "20m以上",
-    (242, 133, 201): "10m以上20m未満",
-    (255, 145, 145): "5m以上10m未満",
-    (255, 183, 183): "3m以上5m未満",
-    (255, 216, 192): "0.5m以上3m未満",
-    (248, 225, 166): "0.5m以上1m未満",
-    (247, 245, 169): "0.5m未満",
-    (255, 255, 179): "0.3m未満"
+    (220, 122, 220): {"description": "20m以上", "weight": 20},
+    (242, 133, 201): {"description": "10m以上20m未満", "weight": 10},
+    (255, 145, 145): {"description": "5m以上10m未満", "weight": 5},
+    (255, 183, 183): {"description": "3m以上5m未満", "weight": 3},
+    (255, 216, 192): {"description": "0.5m以上3m未満", "weight": 1.0},
+    (248, 225, 166): {"description": "0.5m以上1m未満", "weight": 0.5},
+    (247, 245, 169): {"description": "0.5m未満", "weight": 0.4},
+    (255, 255, 179): {"description": "0.3m未満", "weight": 0.2}
 }
 
-def get_tsunami_inundation_info_from_gsi_tile(lat: float, lon: float) -> str:
+def _get_max_info_from_tile(lat: float, lon: float, tile_url_template: str, tile_zoom: int, color_map: dict, no_risk_description: str) -> dict:
     """
-    国土地理院の津波浸水想定タイル画像から情報を取得する。
+    指定されたタイルソースから、中心点と半径100m以内の最大値を取得する汎用関数。
+    タイルをまたがる場合も考慮する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, TSUNAMI_TILE_ZOOM)
-    tile_url = TSUNAMI_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+    search_points = _get_points_in_radius(lat, lon, 100)
+    
+    tiles_to_fetch = {}
+    for p_lat, p_lon in search_points:
+        zoom, x_tile, y_tile, _, _ = latlon_to_gsi_tile_pixel(p_lat, p_lon, tile_zoom)
+        if (zoom, x_tile, y_tile) not in tiles_to_fetch:
+            tiles_to_fetch[(zoom, x_tile, y_tile)] = None
 
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
+    for (zoom, x_tile, y_tile) in tiles_to_fetch.keys():
+        tile_url = tile_url_template.format(z=zoom, x=x_tile, y=y_tile)
+        try:
+            response = requests.get(tile_url, timeout=10)
+            response.raise_for_status()
+            tiles_to_fetch[(zoom, x_tile, y_tile)] = Image.open(BytesIO(response.content)).convert('RGBA')
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching tile {zoom}/{x_tile}/{y_tile}: {e}")
+
+    max_info = {"description": no_risk_description, "weight": 0}
+    center_info = {"description": no_risk_description, "weight": 0}
+
+    for i, (p_lat, p_lon) in enumerate(search_points):
+        is_center_point = (i == 0)
+        zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(p_lat, p_lon, tile_zoom)
         
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
+        img = tiles_to_fetch.get((zoom, x_tile, y_tile))
+        if img is None:
+            continue
 
-        if pixel_rgb in TSUNAMI_COLOR_MAP:
-            return TSUNAMI_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "浸水想定なし"
-        else:
-            return "情報なし"
+        try:
+            # デバッグ用ログ: ピクセル取得直前の情報
+            print(f"DEBUG: Attempting to get pixel at ({px}, {py}) from tile {zoom}/{x_tile}/{y_tile}. Image mode: {img.mode}")
+            r, g, b, a = img.getpixel((px, py))
+            # デバッグ用ログ: 取得したピクセル情報
+            print(f"DEBUG: Pixel at ({px}, {py}) is RGB: ({r}, {g}, {b}), Alpha: {a}")
+            pixel_rgb = (r, g, b)
+            current_info = {"description": "情報なし", "weight": -1}
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching tsunami tile: {e}")
-        return "情報なし"
-    except Exception as e:
-        print(f"Error processing tsunami tile: {e}")
-        return "処理失敗"
+            if pixel_rgb in color_map:
+                current_info = color_map[pixel_rgb]
+            elif a == 0:
+                current_info = {"description": no_risk_description, "weight": 0}
 
-def get_high_tide_inundation_info_from_gsi_tile(lat: float, lon: float) -> str:
+            if is_center_point:
+                center_info = current_info
+
+            if current_info["weight"] > max_info["weight"]:
+                max_info = current_info
+
+        except Exception as e:
+            print(f"ERROR: Failed to process pixel at ({px}, {py}) on tile {zoom}/{x_tile}/{y_tile}. Error: {e}")
+            if is_center_point:
+                center_info = {"description": "処理失敗", "weight": -1}
+
+    return {"max_info": max_info["description"], "center_info": center_info["description"]}
+
+def get_tsunami_inundation_info_from_gsi_tile(lat: float, lon: float) -> dict:
     """
-    国土地理院の高潮浸水想定タイル画像から情報を取得する。
+    国土地理院の津波浸水想定タイルから、中心点と半径100m以内の最大浸水深を取得する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, HIGH_TIDE_TILE_ZOOM)
-    tile_url = HIGH_TIDE_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+    return _get_max_info_from_tile(lat, lon, TSUNAMI_TILE_URL, TSUNAMI_TILE_ZOOM, TSUNAMI_COLOR_MAP, "浸水想定なし")
 
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
-        
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
-
-        if pixel_rgb in HIGH_TIDE_COLOR_MAP:
-            return HIGH_TIDE_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "浸水想定なし"
-        else:
-            return "情報なし"
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching storm surge tile: {e}")
-        return "情報なし"
-    except Exception as e:
-        print(f"Error processing storm surge tile: {e}")
-        return "処理失敗"
+def get_high_tide_inundation_info_from_gsi_tile(lat: float, lon: float) -> dict:
+    """
+    国土地理院の高潮浸水想定タイルから、中心点と半径100m以内の最大浸水深を取得する。
+    """
+    return _get_max_info_from_tile(lat, lon, HIGH_TIDE_TILE_URL, HIGH_TIDE_TILE_ZOOM, HIGH_TIDE_COLOR_MAP, "浸水想定なし")
 
 def _format_jshis_probability(prob_value) -> str:
     """
@@ -179,58 +193,124 @@ def _format_jshis_probability(prob_value) -> str:
             return 'データ解析失敗'
     return 'データなし'
 
+def _format_hazard_output_string(max_val, center_val, no_data_str: str = 'データなし') -> str:
+    """
+    ハザード情報の最大値と中心点の値をフォーマットして返す。
+    max_val, center_valは既にフォーマット済みの文字列、またはNone/データなし相当の値。
+    """
+    # max_valとcenter_valがNoneの場合を考慮
+    max_val_display = max_val if max_val is not None else no_data_str
+    center_val_display = center_val if center_val is not None else no_data_str
+
+    if max_val_display == no_data_str and center_val_display == no_data_str:
+        return no_data_str
+    
+    # 常に2行形式で出力
+    return f"周辺100mの最大: {max_val_display}\n中心点: {center_val_display}"
+
+def _get_and_format_hazard_info(getter_func, max_key: str, center_key: str, formatter_func=None, no_data_str: str = 'データなし') -> str:
+    """
+    ハザード情報を取得し、最大値と中心点の値をフォーマットして返す汎用関数。
+    getter_func: 情報を取得する関数 (例: get_jshis_info, get_inundation_depth_from_gsi_tile)
+    max_key: 取得結果から最大値を取り出すためのキー
+    center_key: 取得結果から中心点の値を取り出すためのキー
+    formatter_func: 取得した値をさらにフォーマットする関数 (例: _format_jshis_probability)
+    no_data_str: データがない場合の表示文字列
+    """
+    info = getter_func()
+    max_val = info.get(max_key)
+    center_val = info.get(center_key)
+
+    if formatter_func:
+        max_val = formatter_func(max_val)
+        center_val = formatter_func(center_val)
+
+    return _format_hazard_output_string(max_val, center_val, no_data_str)
+
+
+
+def _get_points_in_radius(lat: float, lon: float, radius_m: int, num_points: int = 8) -> list[tuple[float, float]]:
+    """
+    指定した中心座標から半径radius_mの円周上の点をnum_points個生成する。
+    """
+    points = [(lat, lon)] # 中心点を常に含める
+    R = 6378137  # 地球の半径(m)
+    
+    for i in range(num_points):
+        angle = 2 * math.pi * i / num_points
+        
+        d_lat = radius_m * math.cos(angle)
+        d_lon = radius_m * math.sin(angle)
+        
+        new_lat = lat + (d_lat / R) * (180 / math.pi)
+        new_lon = lon + (d_lon / R) * (180 / math.pi) / math.cos(lat * math.pi / 180)
+        
+        points.append((new_lat, new_lon))
+        
+    return points
+
 def get_jshis_info(lat: float, lon: float) -> dict[str, str]:
     """
-    指定された緯度経度における地震発生確率を取得する。
+    指定された緯度経度から半径100mの範囲内で最大の地震発生確率と、中心点の確率を取得する。
     J-SHIS 地点別確率値APIを使用。
     """
     results = {}
+    search_points = _get_points_in_radius(lat, lon, 100)
+    
+    max_prob_50 = -1.0
+    max_prob_60 = -1.0
+    center_prob_50 = None
+    center_prob_60 = None
 
-    # 震度5強以上の確率を取得
-    params_50 = {
-        'position': f'{lon},{lat}',
-        'epsg': 4326,
-        'type': 'T30_I50_PS' # このAPIではtypeパラメータは不要かもしれないが、念のため残す
-    }
-    try:
-        response_50 = requests.get(JSHIS_API_URL_BASE, params=params_50, timeout=10)
-        response_50.raise_for_status()
-        geojson_50 = response_50.json()
-        
-        prob_50 = None
-        if geojson_50.get('features') and geojson_50['features'][0].get('properties'):
-            prob_50 = geojson_50['features'][0]['properties'].get('T30_I50_PS')
-        results['今後30年以内に震度5強以上の地震が起こる確率'] = _format_jshis_probability(prob_50)
+    for i, (p_lat, p_lon) in enumerate(search_points):
+        is_center_point = (i == 0)
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching J-SHIS 50 data: {e}")
-        results['今後30年以内に震度5強以上の地震が起こる確率'] = '取得失敗'
-    except json.JSONDecodeError:
-        print("Error decoding J-SHIS 50 GeoJSON.")
-        results['今後30年以内に震度5強以上の地震が起こる確率'] = 'データ解析失敗'
+        # 震度5強以上の確率を取得
+        params_50 = {
+            'position': f'{p_lon},{p_lat}',
+            'epsg': 4326,
+        }
+        try:
+            response_50 = requests.get(JSHIS_API_URL_BASE, params=params_50, timeout=10)
+            response_50.raise_for_status()
+            geojson_50 = response_50.json()
+            
+            if geojson_50.get('features') and geojson_50['features'][0].get('properties'):
+                prob_50_val = geojson_50['features'][0]['properties'].get('T30_I50_PS')
+                if prob_50_val is not None:
+                    prob_50_float = float(prob_50_val)
+                    max_prob_50 = max(max_prob_50, prob_50_float)
+                    if is_center_point:
+                        center_prob_50 = prob_50_float
 
-    # 震度6強以上の確率を取得
-    params_60 = {
-        'position': f'{lon},{lat}',
-        'epsg': 4326,
-        'type': 'T30_I60_PS' # このAPIではtypeパラメータは不要かもしれないが、念のため残す
-    }
-    try:
-        response_60 = requests.get(JSHIS_API_URL_BASE, params=params_60, timeout=10)
-        response_60.raise_for_status()
-        geojson_60 = response_60.json()
+        except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
+            print(f"Error fetching or decoding J-SHIS 50 data: {e}")
 
-        prob_60 = None
-        if geojson_60.get('features') and geojson_60['features'][0].get('properties'):
-            prob_60 = geojson_60['features'][0]['properties'].get('T30_I60_PS')
-        results['今後30年以内に震度6強以上の地震が起こる確率'] = _format_jshis_probability(prob_60)
+        # 震度6強以上の確率を取得
+        params_60 = {
+            'position': f'{p_lon},{p_lat}',
+            'epsg': 4326,
+        }
+        try:
+            response_60 = requests.get(JSHIS_API_URL_BASE, params=params_60, timeout=10)
+            response_60.raise_for_status()
+            geojson_60 = response_60.json()
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching J-SHIS 60 data: {e}")
-        results['今後30年以内に震度6強以上の地震が起こる確率'] = '取得失敗'
-    except json.JSONDecodeError:
-        print("Error decoding J-SHIS 60 GeoJSON.")
-        results['今後30年以内に震度6強以上の地震が起こる確率'] = 'データ解析失敗'
+            if geojson_60.get('features') and geojson_60['features'][0].get('properties'):
+                prob_60_val = geojson_60['features'][0]['properties'].get('T30_I60_PS')
+                if prob_60_val is not None:
+                    prob_60_float = float(prob_60_val)
+                    max_prob_60 = max(max_prob_60, prob_60_float)
+                    if is_center_point:
+                        center_prob_60 = prob_60_float
+
+        except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
+            print(f"Error fetching or decoding J-SHIS 60 data: {e}")
+
+    results['max_prob_50'] = max_prob_50 if max_prob_50 != -1.0 else None
+    results['center_prob_50'] = center_prob_50
+    results['max_prob_60'] = max_prob_60 if max_prob_60 != -1.0 else None
+    results['center_prob_60'] = center_prob_60
 
     return results
 
@@ -251,123 +331,82 @@ def latlon_to_gsi_tile_pixel(lat: float, lon: float, zoom: int) -> tuple[int, in
 
     return zoom, x_tile, y_tile, px, py
 
-def get_inundation_depth_from_gsi_tile(lat: float, lon: float) -> str:
+def get_inundation_depth_from_gsi_tile(lat: float, lon: float) -> dict:
     """
-    国土地理院の浸水深タイル画像から想定最大浸水深を取得する。
+    国土地理院の浸水深タイル画像から、中心点と半径100m以内の最大浸水深を取得する。
+    タイルをまたがる場合も考慮する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, FLOOD_TILE_ZOOM)
-    tile_url = FLOOD_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+    search_points = _get_points_in_radius(lat, lon, 100)
+    
+    # 必要なタイル情報を計算し、ユニークなタイルのみを保持
+    tiles_to_fetch = {}
+    for p_lat, p_lon in search_points:
+        zoom, x_tile, y_tile, _, _ = latlon_to_gsi_tile_pixel(p_lat, p_lon, FLOOD_TILE_ZOOM)
+        if (zoom, x_tile, y_tile) not in tiles_to_fetch:
+            tiles_to_fetch[(zoom, x_tile, y_tile)] = None # 初期値はNone
 
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
+    # 各タイル画像を取得
+    for (zoom, x_tile, y_tile) in tiles_to_fetch.keys():
+        tile_url = FLOOD_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+        try:
+            response = requests.get(tile_url, timeout=10)
+            response.raise_for_status()
+            tiles_to_fetch[(zoom, x_tile, y_tile)] = Image.open(BytesIO(response.content))
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching flood tile {zoom}/{x_tile}/{y_tile}: {e}")
+            # 取得失敗したタイルはNoneのまま
+    
+    max_depth_info = {"description": "浸水なし", "weight": 0}
+    center_depth_info = {"description": "浸水なし", "weight": 0}
+
+    for i, (p_lat, p_lon) in enumerate(search_points):
+        is_center_point = (i == 0)
+        zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(p_lat, p_lon, FLOOD_TILE_ZOOM)
         
-        # 画像のピクセルデータを取得
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
+        img = tiles_to_fetch.get((zoom, x_tile, y_tile))
+        if img is None:
+            continue # タイル取得に失敗した場合はスキップ
 
-        if pixel_rgb in INUNDATION_COLOR_MAP:
-            return INUNDATION_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "浸水なし"
-        else:
-            # 該当する色がない場合、または透明度が0でないが浸水深が不明な場合
-            return "情報なし"
+        try:
+            r, g, b, a = img.getpixel((px, py))
+            pixel_rgb = (r, g, b)
+            current_depth_info = {"description": "情報なし", "weight": -1} # デフォルト値
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching flood tile: {e}")
-        return "対象外"
-    except Exception as e:
-        print(f"Error processing flood tile: {e}")
-        return "処理失敗"
+            if pixel_rgb in INUNDATION_COLOR_MAP:
+                current_depth_info = INUNDATION_COLOR_MAP[pixel_rgb]
+            elif a == 0:
+                current_depth_info = {"description": "浸水なし", "weight": 0}
 
-def get_steep_slope_info_from_gsi_tile(lat: float, lon: float) -> str:
+            if is_center_point:
+                center_depth_info = current_depth_info
+
+            if current_depth_info["weight"] > max_depth_info["weight"]:
+                max_depth_info = current_depth_info
+
+        except Exception as e:
+            print(f"Error processing flood tile pixel: {e}")
+            if is_center_point:
+                center_depth_info = {"description": "処理失敗", "weight": -1}
+
+    return {"max_depth": max_depth_info["description"], "center_depth": center_depth_info["description"]}
+
+def get_steep_slope_info_from_gsi_tile(lat: float, lon: float) -> dict:
     """
-    国土地理院の急傾斜地の崩壊警戒区域タイル画像から情報を取得する。
+    国土地理院の急傾斜地の崩壊警戒区域タイルから情報を取得する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, STEEP_SLOPE_TILE_ZOOM)
-    tile_url = STEEP_SLOPE_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+    return _get_max_info_from_tile(lat, lon, STEEP_SLOPE_TILE_URL, STEEP_SLOPE_TILE_ZOOM, STEEP_SLOPE_COLOR_MAP, "該当なし")
 
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
-        
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
-
-        if pixel_rgb in STEEP_SLOPE_COLOR_MAP:
-            return STEEP_SLOPE_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "該当なし"
-        else:
-            return "情報なし"
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching steep slope tile: {e}")
-        return "取得失敗"
-    except Exception as e:
-        print(f"Error processing steep slope tile: {e}")
-        return "処理失敗"
-
-def get_debris_flow_info_from_gsi_tile(lat: float, lon: float) -> str:
+def get_debris_flow_info_from_gsi_tile(lat: float, lon: float) -> dict:
     """
-    国土地理院の土石流警戒区域タイル画像から情報を取得する。
+    国土地理院の土石流警戒区域タイルから情報を取得する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, DEBRIS_FLOW_TILE_ZOOM)
-    tile_url = DEBRIS_FLOW_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
+    return _get_max_info_from_tile(lat, lon, DEBRIS_FLOW_TILE_URL, DEBRIS_FLOW_TILE_ZOOM, DEBRIS_FLOW_COLOR_MAP, "該当なし")
 
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
-        
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
-
-        if pixel_rgb in DEBRIS_FLOW_COLOR_MAP:
-            return DEBRIS_FLOW_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "該当なし"
-        else:
-            return "情報なし"
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching debris flow tile: {e}")
-        return "取得失敗"
-    except Exception as e:
-        print(f"Error processing debris flow tile: {e}")
-        return "処理失敗"
-
-def get_landslide_info_from_gsi_tile(lat: float, lon: float) -> str:
+def get_landslide_info_from_gsi_tile(lat: float, lon: float) -> dict:
     """
-    国土地理院の地すべり警戒区域タイル画像から情報を取得する。
+    国土地理院の地すべり警戒区域タイルから情報を取得する。
     """
-    zoom, x_tile, y_tile, px, py = latlon_to_gsi_tile_pixel(lat, lon, LANDSLIDE_TILE_ZOOM)
-    tile_url = LANDSLIDE_TILE_URL.format(z=zoom, x=x_tile, y=y_tile)
-
-    try:
-        response = requests.get(tile_url, timeout=10)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
-        
-        r, g, b, a = img.getpixel((px, py))
-        pixel_rgb = (r, g, b)
-
-        if pixel_rgb in LANDSLIDE_COLOR_MAP:
-            return LANDSLIDE_COLOR_MAP[pixel_rgb]
-        elif a == 0:
-            return "該当なし"
-        else:
-            return "情報なし"
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching landslide tile: {e}")
-        return "取得失敗"
-    except Exception as e:
-        print(f"Error processing landslide tile: {e}")
-        return "処理失敗"
+    return _get_max_info_from_tile(lat, lon, LANDSLIDE_TILE_URL, LANDSLIDE_TILE_ZOOM, LANDSLIDE_COLOR_MAP, "該当なし")
     
 def get_large_scale_filled_land_info_from_geojson(lat: float, lon: float) -> str:
     """
@@ -398,58 +437,73 @@ def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     """
     hazard_info = {}
 
-    jshis_info = get_jshis_info(lat, lon)
-    prob_50 = jshis_info.get('今後30年以内に震度5強以上の地震が起こる確率', 'データなし')
-    prob_60 = jshis_info.get('今後30年以内に震度6強以上の地震が起こる確率', 'データなし')
+    # J-SHISの地震発生確率情報を取得
+    print(f"Fetching J-SHIS info for lat: {lat}, lon: {lon}")
+    hazard_info['30年以内に震度5強以上の地震が起こる確率'] = _get_and_format_hazard_info(
+        lambda: get_jshis_info(lat, lon),
+        'max_prob_50', 'center_prob_50', _format_jshis_probability
+    )
+    hazard_info['30年以内に震度6強以上の地震が起こる確率'] = _get_and_format_hazard_info(
+        lambda: get_jshis_info(lat, lon),
+        'max_prob_60', 'center_prob_60', _format_jshis_probability
+    )
+    
+    # 国土地理院の浸水深情報を取得
+    print(f"Fetching inundation depth info for lat: {lat}, lon: {lon}")
+    hazard_info['想定最大浸水深'] = _get_and_format_hazard_info(
+        lambda: get_inundation_depth_from_gsi_tile(lat, lon),
+        'max_depth', 'center_depth', no_data_str="浸水なし"
+    )
 
-    earthquake_details = []
-    if prob_50 != 'データなし':
-        earthquake_details.append(f"震度5強以上:{prob_50}")
-    if prob_60 != 'データなし':
-        earthquake_details.append(f"震度6強以上:{prob_60}")
+    # 国土地理院の津波浸水想定情報を取得
+    print(f"Fetching tsunami inundation info for lat: {lat}, lon: {lon}")
+    hazard_info['津波浸水想定'] = _get_and_format_hazard_info(
+        lambda: get_tsunami_inundation_info_from_gsi_tile(lat, lon),
+        'max_info', 'center_info', no_data_str="浸水想定なし"
+    )
 
-    if earthquake_details:
-        hazard_info['今後30年以内に大地震が起こる確率'] = "\n".join(earthquake_details)
-    else:
-        hazard_info['今後30年以内に大地震が起こる確率'] = 'データなし'
+    # 国土地理院の高潮浸水想定情報を取得
+    print(f"Fetching high tide inundation info for lat: {lat}, lon: {lon}")
+    hazard_info['高潮浸水想定'] = _get_and_format_hazard_info(
+        lambda: get_high_tide_inundation_info_from_gsi_tile(lat, lon),
+        'max_info', 'center_info', no_data_str="浸水想定なし"
+    )
 
-    hazard_info['想定最大浸水深'] = get_inundation_depth_from_gsi_tile(lat, lon)
-    hazard_info['土砂災害警戒・特別警戒区域'] = ''
-    hazard_info['津波浸水想定'] = get_tsunami_inundation_info_from_gsi_tile(lat, lon)
-    hazard_info['高潮浸水想定'] = get_high_tide_inundation_info_from_gsi_tile(lat, lon)
+    # 国土地理院の大規模盛土造成地情報を取得
+    print(f"Fetching large scale filled land info for lat: {lat}, lon: {lon}")
     hazard_info['大規模盛土造成地'] = get_large_scale_filled_land_info_from_geojson(lat, lon)
     
-    # 個別の土砂災害情報を取得
-    debris_flow_status = get_debris_flow_info_from_gsi_tile(lat, lon)
-    steep_slope_status = get_steep_slope_info_from_gsi_tile(lat, lon)
-    landslide_status = get_landslide_info_from_gsi_tile(lat, lon)
+    # 国土地理院の土砂災害ハザード情報を取得
+    print(f"Fetching landslide hazard info for lat: {lat}, lon: {lon}")
+    debris_flow_info = get_debris_flow_info_from_gsi_tile(lat, lon)
+    steep_slope_info = get_steep_slope_info_from_gsi_tile(lat, lon)
+    landslide_info = get_landslide_info_from_gsi_tile(lat, lon)
 
-    # 土砂災害警戒・特別警戒区域の統合判定と詳細リスト作成
-    landslide_details = []
-    consolidated_landslide_status = '該当なし'
+    max_landslide_descriptions = []
+    center_landslide_descriptions = []
 
-    if debris_flow_status == '土石流特別警戒区域':
-        landslide_details.append('土石流(特別警戒)')
-        consolidated_landslide_status = '該当あり'
-    elif debris_flow_status == '土石流警戒区域':
-        landslide_details.append('土石流')
-        consolidated_landslide_status = '該当あり'
-    if steep_slope_status == '特別警戒区域':
-        landslide_details.append('急傾斜地(特別警戒)')
-        consolidated_landslide_status = '該当あり'
-    elif steep_slope_status == '警戒区域':
-        landslide_details.append('急傾斜地')
-        consolidated_landslide_status = '該当あり'
-    if landslide_status == '特別警戒区域':
-        landslide_details.append('地すべり(特別警戒)')
-        consolidated_landslide_status = '該当あり'
-    elif landslide_status == '警戒区域':
-        landslide_details.append('地すべり')
-        consolidated_landslide_status = '該当あり'
+    # 土石流
+    if debris_flow_info.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(debris_flow_info['max_info'])
+    if debris_flow_info.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(debris_flow_info['center_info'])
 
-    if consolidated_landslide_status == '該当あり':
-        hazard_info['土砂災害警戒・特別警戒区域'] = "\n".join(landslide_details)
-    else:
-        hazard_info['土砂災害警戒・特別警戒区域'] = consolidated_landslide_status
+    # 急傾斜地
+    if steep_slope_info.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(steep_slope_info['max_info'])
+    if steep_slope_info.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(steep_slope_info['center_info'])
+
+    # 地すべり
+    if landslide_info.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(landslide_info['max_info'])
+    if landslide_info.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(landslide_info['center_info'])
+
+    # カンマ区切りで結合
+    max_landslide_str = ", ".join(max_landslide_descriptions) if max_landslide_descriptions else "該当なし"
+    center_landslide_str = ", ".join(center_landslide_descriptions) if center_landslide_descriptions else "該当なし"
+
+    hazard_info['土砂災害警戒・特別警戒区域'] = _format_hazard_output_string(max_landslide_str, center_landslide_str, "該当なし")
 
     return hazard_info

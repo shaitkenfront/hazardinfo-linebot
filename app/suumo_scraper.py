@@ -17,15 +17,25 @@ def extract_address_from_suumo(url: str) -> str | None:
         
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # SUUMOの住所は'ui-text--bold'クラスを持つdivに含まれることが多い
-        # より特定しやすいセレクタやIDがあればそちらを優先する
-        # 例：<div class="property_view_note-info-address">...</div>など
-        address_element = soup.find('div', class_='property_view_note-info-address')
+        # ルール: thが「住所」または「所在地」である次のtdセルの最初のpタグの内容
+        print(f"All th tags found: {[span.text.strip() for span in soup.find_all('th')]}")  # デバッグ用
+        for th_tag in soup.find_all('th'):
+            if th_tag.text.strip() in ['住所', '所在地']:
+                td_tag = th_tag.find_next_sibling('td')
+                print(f"Found td tag: {td_tag}")
+                if td_tag:
+                    p_tag = td_tag.find('p')
+                    if p_tag:
+                        return p_tag.text.strip()
+                    else:
+                        return td_tag.text.strip()
+        
 
+        # 既存のセレクタ（フォールバック）
+        address_element = soup.find('div', class_='property_view_note-info-address')
         if address_element:
             return address_element.text.strip()
         
-        # 代替セレクタ（サイト構造の変更に対応）
         address_element = soup.select_one('.property_view_note-info-address') # CSSセレクタで検索
         if address_element:
             return address_element.text.strip()

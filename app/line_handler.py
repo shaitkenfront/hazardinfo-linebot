@@ -51,7 +51,8 @@ def reply_message(reply_token: str, text: str):
     }
     
     try:
-        response = requests.post(LINE_REPLY_API_URL, headers=headers, data=json.dumps(payload), timeout=5)
+        # ペイロードをUTF-8でエンコードして送信
+        response = requests.post(LINE_REPLY_API_URL, headers=headers, data=json.dumps(payload, ensure_ascii=False).encode('utf-8'), timeout=5)
         response.raise_for_status()
         print(f"LINE reply API response: {response.status_code} {response.text}")
     except requests.exceptions.RequestException as e:

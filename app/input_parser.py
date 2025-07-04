@@ -4,7 +4,9 @@ import re
 LATLON_PATTERN = re.compile(r'^\s*(-?\d{1,2}(\.\d+)?)\s*,\s*(-?\d{1,3}(\.\d+)?)\s*$')
 
 # SUUMO物件詳細URLの正規表現パターン
-SUUMO_URL_PATTERN = re.compile(r'^https://suumo\.jp/(chintai|jj|ms|tochi|kodate|chuko|chukomansion)/.*/bc_.*$')
+SUUMO_URL_PATTERN = re.compile(r'^https://suumo\.jp/(chintai|jj|ms|tochi|ikkodate|chuko|chukoikkodate|chukomansion)/.*$')
+
+OTHER_URL_PATTERN = re.compile(r'^https?://[^\s/$.?#].[^\s]*$')
 
 def parse_input_type(text: str) -> tuple[str, str]:
     """
@@ -22,4 +24,7 @@ def parse_input_type(text: str) -> tuple[str, str]:
     if SUUMO_URL_PATTERN.match(text):
         return 'suumo_url', text
         
+    if OTHER_URL_PATTERN.match(text):
+        return 'invalid_url', text
+
     return 'address', text
