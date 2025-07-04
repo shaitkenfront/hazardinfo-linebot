@@ -455,75 +455,145 @@ def get_all_hazard_info(lat: float, lon: float) -> dict[str, str]:
     hazard_info = {}
 
     # J-SHISの地震発生確率情報を取得
-    print(f"Fetching J-SHIS info for lat: {lat}, lon: {lon}")
-    hazard_info['30年以内に震度5強以上の地震が起こる確率'] = _get_and_format_hazard_info(
-        lambda: get_jshis_info(lat, lon),
-        'max_prob_50', 'center_prob_50', _format_jshis_probability
-    )
-    hazard_info['30年以内に震度6強以上の地震が起こる確率'] = _get_and_format_hazard_info(
-        lambda: get_jshis_info(lat, lon),
-        'max_prob_60', 'center_prob_60', _format_jshis_probability
-    )
+    jshis_info = get_jshis_info(lat, lon)
+    hazard_info['jshis_prob_50'] = {
+        'max_prob': jshis_info.get('max_prob_50'),
+        'center_prob': jshis_info.get('center_prob_50')
+    }
+    hazard_info['jshis_prob_60'] = {
+        'max_prob': jshis_info.get('max_prob_60'),
+        'center_prob': jshis_info.get('center_prob_60')
+    }
     
     # 国土地理院の浸水深情報を取得
-    print(f"Fetching inundation depth info for lat: {lat}, lon: {lon}")
-    hazard_info['想定最大浸水深'] = _get_and_format_hazard_info(
-        lambda: get_inundation_depth_from_gsi_tile(lat, lon),
-        'max_depth', 'center_depth', no_data_str="浸水なし"
-    )
+    inundation_info = get_inundation_depth_from_gsi_tile(lat, lon)
+    hazard_info['inundation_depth'] = {
+        'max_info': inundation_info.get('max_depth'),
+        'center_info': inundation_info.get('center_depth')
+    }
 
     # 国土地理院の津波浸水想定情報を取得
-    print(f"Fetching tsunami inundation info for lat: {lat}, lon: {lon}")
-    hazard_info['津波浸水想定'] = _get_and_format_hazard_info(
-        lambda: get_tsunami_inundation_info_from_gsi_tile(lat, lon),
-        'max_info', 'center_info', no_data_str="浸水想定なし"
-    )
+    tsunami_info = get_tsunami_inundation_info_from_gsi_tile(lat, lon)
+    hazard_info['tsunami_inundation'] = {
+        'max_info': tsunami_info.get('max_info'),
+        'center_info': tsunami_info.get('center_info')
+    }
 
     # 国土地理院の高潮浸水想定情報を取得
-    print(f"Fetching high tide inundation info for lat: {lat}, lon: {lon}")
-    hazard_info['高潮浸水想定'] = _get_and_format_hazard_info(
-        lambda: get_high_tide_inundation_info_from_gsi_tile(lat, lon),
-        'max_info', 'center_info', no_data_str="浸水想定なし"
-    )
+    hightide_info = get_high_tide_inundation_info_from_gsi_tile(lat, lon)
+    hazard_info['hightide_inundation'] = {
+        'max_info': hightide_info.get('max_info'),
+        'center_info': hightide_info.get('center_info')
+    }
 
     # 国土地理院の大規模盛土造成地情報を取得
-    print(f"Fetching large scale filled land info for lat: {lat}, lon: {lon}")
-    hazard_info['大規模盛土造成地'] = _get_and_format_hazard_info(
-        lambda: get_large_scale_filled_land_info_from_geojson(lat, lon),
-        'max_info', 'center_info', no_data_str="情報なし"
-    )
+    large_fill_land_info = get_large_scale_filled_land_info_from_geojson(lat, lon)
+    hazard_info['large_fill_land'] = {
+        'max_info': large_fill_land_info.get('max_info'),
+        'center_info': large_fill_land_info.get('center_info')
+    }
     
     # 国土地理院の土砂災害ハザード情報を取得
-    print(f"Fetching landslide hazard info for lat: {lat}, lon: {lon}")
+    # 国土地理院の土砂災害ハザード情報を取得
     debris_flow_info = get_debris_flow_info_from_gsi_tile(lat, lon)
     steep_slope_info = get_steep_slope_info_from_gsi_tile(lat, lon)
     landslide_info = get_landslide_info_from_gsi_tile(lat, lon)
 
+    hazard_info['landslide_hazard'] = {
+        'debris_flow': {'max_info': debris_flow_info.get('max_info'), 'center_info': debris_flow_info.get('center_info')},
+        'steep_slope': {'max_info': steep_slope_info.get('max_info'), 'center_info': steep_slope_info.get('center_info')},
+        'landslide': {'max_info': landslide_info.get('max_info'), 'center_info': landslide_info.get('center_info')}
+    }
+
+    return hazard_info
+
+def format_all_hazard_info_for_display(hazards: dict) -> dict:
+    """
+    get_all_hazard_infoから返された生のハザードデータを表示用に整形する。
+    """
+    display_info = {}
+
+    # 地震発生確率
+    prob_50_data = hazards.get('jshis_prob_50', {})
+    prob_50_str = _format_hazard_output_string(
+        _format_jshis_probability(prob_50_data.get('max_prob')),
+        _format_jshis_probability(prob_50_data.get('center_prob'))
+    )
+    display_info['30年以内に震度5強以上の地震が起こる確率'] = prob_50_str
+
+    prob_60_data = hazards.get('jshis_prob_60', {})
+    prob_60_str = _format_hazard_output_string(
+        _format_jshis_probability(prob_60_data.get('max_prob')),
+        _format_jshis_probability(prob_60_data.get('center_prob'))
+    )
+    display_info['30年以内に震度6強以上の地震が起こる確率'] = prob_60_str
+
+    # 想定最大浸水深
+    inundation_data = hazards.get('inundation_depth', {})
+    display_info['想定最大浸水深'] = _format_hazard_output_string(
+        inundation_data.get('max_info'),
+        inundation_data.get('center_info'),
+        no_data_str="浸水なし"
+    )
+
+    # 津波浸水想定
+    tsunami_data = hazards.get('tsunami_inundation', {})
+    display_info['津波浸水想定'] = _format_hazard_output_string(
+        tsunami_data.get('max_info'),
+        tsunami_data.get('center_info'),
+        no_data_str="浸水想定なし"
+    )
+
+    # 高潮浸水想定
+    hightide_data = hazards.get('hightide_inundation', {})
+    display_info['高潮浸水想定'] = _format_hazard_output_string(
+        hightide_data.get('max_info'),
+        hightide_data.get('center_info'),
+        no_data_str="浸水想定なし"
+    )
+
+    # 大規模盛土造成地
+    large_fill_land_data = hazards.get('large_fill_land', {})
+    display_info['大規模盛土造成地'] = _format_hazard_output_string(
+        large_fill_land_data.get('max_info'),
+        large_fill_land_data.get('center_info'),
+        no_data_str="情報なし"
+    )
+
+    # 物件住所 (SUUMOからの場合)
+    property_address = hazards.get('property_address')
+    if property_address:
+        display_info['物件住所'] = property_address
+
+    # 土砂災害警戒・特別警戒区域
+    landslide_hazard_data = hazards.get('landslide_hazard', {})
     max_landslide_descriptions = []
     center_landslide_descriptions = []
 
     # 土石流
-    if debris_flow_info.get('max_info') != '該当なし':
-        max_landslide_descriptions.append(debris_flow_info['max_info'])
-    if debris_flow_info.get('center_info') != '該当なし':
-        center_landslide_descriptions.append(debris_flow_info['center_info'])
+    debris_flow_data = landslide_hazard_data.get('debris_flow', {})
+    if debris_flow_data.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(debris_flow_data['max_info'])
+    if debris_flow_data.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(debris_flow_data['center_info'])
 
     # 急傾斜地
-    if steep_slope_info.get('max_info') != '該当なし':
-        max_landslide_descriptions.append(steep_slope_info['max_info'])
-    if steep_slope_info.get('center_info') != '該当なし':
-        center_landslide_descriptions.append(steep_slope_info['center_info'])
+    steep_slope_data = landslide_hazard_data.get('steep_slope', {})
+    if steep_slope_data.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(steep_slope_data['max_info'])
+    if steep_slope_data.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(steep_slope_data['center_info'])
 
     # 地すべり
-    if landslide_info.get('max_info') != '該当なし':
-        max_landslide_descriptions.append(landslide_info['max_info'])
-    if landslide_info.get('center_info') != '該当なし':
-        center_landslide_descriptions.append(landslide_info['center_info'])
+    landslide_data = landslide_hazard_data.get('landslide', {})
+    if landslide_data.get('max_info') != '該当なし':
+        max_landslide_descriptions.append(landslide_data['max_info'])
+    if landslide_data.get('center_info') != '該当なし':
+        center_landslide_descriptions.append(landslide_data['center_info'])
 
-    # カンマ区切りで結合
     max_landslide_str = ", ".join(max_landslide_descriptions) if max_landslide_descriptions else "該当なし"
     center_landslide_str = ", ".join(center_landslide_descriptions) if center_landslide_descriptions else "該当なし"
 
-    hazard_info['土砂災害警戒・特別警戒区域'] = _format_hazard_output_string(max_landslide_str, center_landslide_str, "該当なし")
+    display_info['土砂災害警戒・特別警戒区域'] = _format_hazard_output_string(max_landslide_str, center_landslide_str, "該当なし")
 
-    return hazard_info
+    return display_info
