@@ -4,7 +4,7 @@ import math
 from PIL import Image
 from io import BytesIO
 from shapely.geometry import shape, Point
-from src.app import geocoding, geojsonhelper
+from app import geocoding, geojsonhelper
 
 # J-SHIS API 地点別確率値APIのベースURL (2020年版、平均、全期間)
 JSHIS_API_URL_BASE = "https://www.j-shis.bosai.go.jp/map/api/pshm/Y2020/AVR/TTL_MTTL/meshinfo.geojson"
