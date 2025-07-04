@@ -1,5 +1,5 @@
 import json
-from app import input_parser, geocoding, suumo_scraper, hazard_info, line_handler
+from src.app import input_parser, geocoding, suumo_scraper, hazard_info, line_handler
 
 def get_formatted_hazard_data(text: str) -> tuple[str, dict | None]:
     """
