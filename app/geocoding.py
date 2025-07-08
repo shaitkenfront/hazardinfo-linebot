@@ -67,13 +67,15 @@ def geocode(address: str) -> tuple[float, float] | None:
     Returns:
         tuple[float, float] | None: (緯度, 経度) のタプル。変換失敗時はNone。
     """
-    if not API_KEY:
+    api_key = os.environ.get('GOOGLE_API_KEY')
+    
+    if not api_key:
         print("Google Geocoding API key is not configured.")
         return None
 
     params = {
         'address': address,
-        'key': API_KEY,
+        'key': api_key,
         'language': 'ja'
     }
     
@@ -104,13 +106,15 @@ def reverse_geocode(lat: float, lon: float) -> str | None:
     Returns:
         str | None: 住所文字列。変換失敗時はNone。
     """
-    if not API_KEY:
+    api_key = os.environ.get('GOOGLE_API_KEY')
+    
+    if not api_key:
         print("Google Geocoding API key is not configured.")
         return None
 
     params = {
         'latlng': f'{lat},{lon}',
-        'key': API_KEY,
+        'key': api_key,
         'language': 'ja'
     }
 

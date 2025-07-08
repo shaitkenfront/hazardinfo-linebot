@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(python -m pytest --version)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -m pip install:*)",
+      "Bash(python3 -m pytest -v)",
+      "Bash(apt list:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(make test:*)"
+    ],
+    "deny": []
+  }
+}

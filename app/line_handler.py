@@ -32,13 +32,15 @@ def reply_message(reply_token: str, text: str):
     """
     LINE Messaging APIを使ってメッセージを返信する。
     """
-    if not LINE_CHANNEL_ACCESS_TOKEN:
+    access_token = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN')
+    
+    if not access_token:
         print("LINE Channel Access Token is not configured.")
         return
 
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {LINE_CHANNEL_ACCESS_TOKEN}'
+        'Authorization': f'Bearer {access_token}'
     }
     payload = {
         'replyToken': reply_token,
@@ -62,11 +64,13 @@ def handle_line_event(event_body: str, signature: str, response_function):
     """
     LINEのWebhookイベントを処理し、応答関数を呼び出す。
     """
-    if not LINE_CHANNEL_SECRET:
+    channel_secret = os.environ.get('LINE_CHANNEL_SECRET')
+    
+    if not channel_secret:
         print("LINE Channel Secret is not configured.")
         return
 
-    if not validate_signature(event_body, signature, LINE_CHANNEL_SECRET):
+    if not validate_signature(event_body, signature, channel_secret):
         print("Invalid signature. Please check your channel secret.")
         return
 
