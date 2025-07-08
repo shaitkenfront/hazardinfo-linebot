@@ -1,6 +1,6 @@
 # ハザードマップ情報API
 
-緯度経度を受け取ってハザードマップ情報をJSONで返すLambda関数です。
+住所、URL、緯度経度を受け取ってハザードマップ情報をJSONで返すLambda関数です。
 
 ## ファイル
 
@@ -12,16 +12,37 @@
 
 `POST/GET /hazard-info`
 
-### リクエスト
+### リクエスト方法
 
-#### GET リクエスト (クエリパラメータ)
+#### 方法1: 柔軟な入力（推奨）
 
+**GET リクエスト (クエリパラメータ)**
+```bash
+# 住所で検索
+GET /hazard-info?input=東京都新宿区
+
+# 緯度経度で検索
+GET /hazard-info?input=35.6586,139.7454
+
+# SUUMO URLで検索
+GET /hazard-info?input=https://suumo.jp/chintai/tokyo/example
+```
+
+**POST リクエスト (JSON)**
+```json
+{
+  "input": "東京都新宿区"
+}
+```
+
+#### 方法2: 従来の緯度経度指定（後方互換性）
+
+**GET リクエスト**
 ```
 GET /hazard-info?lat=35.6586&lon=139.7454
 ```
 
-#### POST リクエスト (JSON)
-
+**POST リクエスト**
 ```json
 {
   "lat": 35.6586,
@@ -31,6 +52,13 @@ GET /hazard-info?lat=35.6586&lon=139.7454
 
 ### パラメータ
 
+#### 柔軟な入力
+- `input` (必須): 以下のいずれかの形式
+  - 住所（例: "東京都新宿区"）
+  - 緯度経度（例: "35.6586, 139.7454"）
+  - SUUMO URL（例: "https://suumo.jp/chintai/tokyo/example"）
+
+#### 従来の緯度経度指定
 - `lat` (必須): 緯度 (24.0〜46.0の範囲)
 - `lon` (必須): 経度 (123.0〜146.0の範囲)
 
@@ -44,6 +72,8 @@ GET /hazard-info?lat=35.6586&lon=139.7454
     "latitude": 35.6586,
     "longitude": 139.7454
   },
+  "source": "住所: 東京都新宿区",
+  "input_type": "address",
   "hazard_info": {
     "jshis_prob_50": {
       "max_prob": 0.85,
@@ -97,8 +127,15 @@ GET /hazard-info?lat=35.6586&lon=139.7454
 }
 ```
 
-### ハザード情報の説明
+### レスポンス項目の説明
 
+#### 基本情報
+- **coordinates**: 解析された緯度経度
+- **source**: 入力元の情報（住所、座標、SUUMO物件など）
+- **input_type**: 入力タイプ（"address", "latlon", "suumo_url"）
+- **status**: 処理ステータス（"success"）
+
+#### ハザード情報
 - **jshis_prob_50/60**: 30年以内の地震発生確率 (震度5強以上/6強以上)
 - **inundation_depth**: 想定最大浸水深
 - **tsunami_inundation**: 津波浸水想定
@@ -111,6 +148,9 @@ GET /hazard-info?lat=35.6586&lon=139.7454
 
 各項目で `max_info` は中心点から半径100m以内の最大値、`center_info` は中心点の値を示します。
 
+#### SUUMO物件の場合
+- **property_address**: スクレイピングで取得した物件住所
+
 ## デプロイ
 
 1. AWS Lambdaで新しい関数を作成
@@ -118,9 +158,33 @@ GET /hazard-info?lat=35.6586&lon=139.7454
 3. appフォルダも含めてパッケージング
 4. API Gatewayと連携してREST APIを公開
 
+## 使用例
+
+### 住所での検索
+```bash
+curl "https://api.example.com/hazard-info?input=東京都新宿区"
+```
+
+### 緯度経度での検索
+```bash
+curl "https://api.example.com/hazard-info?input=35.6586,139.7454"
+```
+
+### SUUMO URLでの検索
+```bash
+curl -X POST https://api.example.com/hazard-info \
+  -H "Content-Type: application/json" \
+  -d '{"input": "https://suumo.jp/chintai/tokyo/example"}'
+```
+
+### 従来形式（後方互換性）
+```bash
+curl "https://api.example.com/hazard-info?lat=35.6586&lon=139.7454"
+```
+
 ## テスト
 
 ```bash
-# 関数のテストを実行
+# 関数のテストを実行（24テスト）
 python -m pytest tests/test_hazard_api.py -v
 ```
