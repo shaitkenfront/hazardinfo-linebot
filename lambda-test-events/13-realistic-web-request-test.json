@@ -1,0 +1,22 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Origin": "https://hazard-webapp.vercel.app",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Referer": "https://hazard-webapp.vercel.app/"
+  },
+  "body": "{\"input\": \"神奈川県横浜市中区\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-realistic",
+    "stage": "prod",
+    "httpMethod": "POST",
+    "identity": {
+      "sourceIp": "203.0.113.0"
+    }
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}
