@@ -1,0 +1,18 @@
+{
+  "httpMethod": "GET",
+  "headers": {
+    "Accept": "application/json"
+  },
+  "body": null,
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-get",
+    "stage": "test",
+    "httpMethod": "GET"
+  },
+  "pathParameters": null,
+  "queryStringParameters": {
+    "lat": "35.6586",
+    "lon": "139.7454"
+  }
+}

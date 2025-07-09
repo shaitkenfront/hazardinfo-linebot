@@ -1,0 +1,16 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "body": "{\"lat\": 35.6586, \"lon\": 139.7454}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id",
+    "stage": "test",
+    "httpMethod": "POST"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}

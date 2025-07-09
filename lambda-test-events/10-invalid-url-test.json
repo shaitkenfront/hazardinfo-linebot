@@ -1,0 +1,16 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "body": "{\"input\": \"https://example.com/invalid-url\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-invalid-url",
+    "stage": "test",
+    "httpMethod": "POST"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}

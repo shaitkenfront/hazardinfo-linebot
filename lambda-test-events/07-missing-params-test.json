@@ -1,0 +1,16 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "body": "{}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-missing-params",
+    "stage": "test",
+    "httpMethod": "POST"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}

@@ -1,0 +1,17 @@
+{
+  "httpMethod": "OPTIONS",
+  "headers": {
+    "Origin": "https://hazard-webapp.vercel.app",
+    "Access-Control-Request-Method": "POST",
+    "Access-Control-Request-Headers": "Content-Type"
+  },
+  "body": null,
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-options",
+    "stage": "test",
+    "httpMethod": "OPTIONS"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}

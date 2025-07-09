@@ -1,0 +1,17 @@
+{
+  "httpMethod": "GET",
+  "headers": {
+    "Accept": "application/json"
+  },
+  "body": null,
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-get-input",
+    "stage": "test",
+    "httpMethod": "GET"
+  },
+  "pathParameters": null,
+  "queryStringParameters": {
+    "input": "東京都渋谷区"
+  }
+}

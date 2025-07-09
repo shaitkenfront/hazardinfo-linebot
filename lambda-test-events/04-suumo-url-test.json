@@ -1,0 +1,16 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "body": "{\"input\": \"https://suumo.jp/chintai/tokyo/sc_shinjuku/bc_100001231234/\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-suumo",
+    "stage": "test",
+    "httpMethod": "POST"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}

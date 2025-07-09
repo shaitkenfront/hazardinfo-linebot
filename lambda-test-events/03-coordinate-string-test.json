@@ -1,0 +1,16 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "body": "{\"input\": \"35.6586, 139.7454\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "requestId": "test-request-id-coord-string",
+    "stage": "test",
+    "httpMethod": "POST"
+  },
+  "pathParameters": null,
+  "queryStringParameters": null
+}
