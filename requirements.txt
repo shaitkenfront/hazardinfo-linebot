@@ -1,0 +1,9 @@
+requests
+beautifulsoup4
+Pillow
+boto3
+shapely
+pytest
+pytest-mock
+pytest-cov
+responses

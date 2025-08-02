@@ -1,0 +1,6 @@
+{
+  "headers": {
+    "x-line-signature": "test_signature"
+  },
+  "body": "{\"events\":[{\"type\":\"message\",\"message\":{\"type\":\"text\",\"text\":\"35.6895, 139.6917\"},\"replyToken\":\"test_reply_token_67890\",\"source\":{\"type\":\"user\",\"userId\":\"test_user_id\"},\"timestamp\":1640995300000}]}"
+}

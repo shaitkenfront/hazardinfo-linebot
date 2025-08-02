@@ -1,0 +1,6 @@
+{
+  "headers": {
+    "x-line-signature": "test_signature"
+  },
+  "body": "{\"events\":[{\"type\":\"message\",\"message\":{\"type\":\"text\",\"text\":\"東京都新宿区西新宿2-8-1\"},\"replyToken\":\"test_reply_token_12345\",\"source\":{\"type\":\"user\",\"userId\":\"test_user_id\"},\"timestamp\":1640995200000}]}"
+}
