@@ -79,11 +79,11 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
 
     # 大規模盛土造成地
     large_fill_land_data = hazards.get('large_fill_land', {})
-    display_info['大規模盛土造成地'] = _format_hazard_output_string(
-        large_fill_land_data.get('max_info'),
-        large_fill_land_data.get('center_info'),
-        no_data_str="情報なし"
-    )
+    if large_fill_land_data and large_fill_land_data.get("overlapped") is not None:
+        display_info['大規模盛土造成地'] = _format_hazard_output_string(
+            large_fill_land_data.get("max_info"),
+            large_fill_land_data.get("center_info"),
+            no_data_str="該当なし")
 
 
     # 土砂災害警戒・特別警戒区域

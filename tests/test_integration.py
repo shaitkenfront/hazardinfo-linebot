@@ -1,7 +1,6 @@
-import pytest
 import json
 import responses
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from lambda_function import lambda_handler
 
 

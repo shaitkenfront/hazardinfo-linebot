@@ -1,6 +1,4 @@
-import pytest
-import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from lambda_function import get_formatted_hazard_data, get_hazard_response, lambda_handler
 
 

@@ -1,4 +1,3 @@
-import pytest
 from app.input_parser import parse_input_type
 
 

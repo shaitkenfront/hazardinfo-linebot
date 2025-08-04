@@ -1,6 +1,5 @@
-import pytest
 import responses
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from app.geocoding import geocode, reverse_geocode, get_pref_code
 
 

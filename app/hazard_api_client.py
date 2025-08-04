@@ -1,7 +1,6 @@
 import os
 import requests
-import json
-from typing import Dict, Optional, List, Union
+from typing import Dict, Optional, List
 
 
 class HazardAPIClient:
