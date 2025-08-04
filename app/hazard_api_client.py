@@ -17,7 +17,21 @@ class HazardAPIClient:
         self.api_url = api_url or os.environ.get('HAZARD_MAP_API_URL')
         if not self.api_url:
             raise ValueError("API URL is required. Set HAZARD_MAP_API_URL environment variable or pass api_url parameter.")
-    
+
+    def _get_default_hazard_types(self) -> List[str]:
+        """
+        環境変数ENABLE_LARGE_FILL_LANDに基づいてデフォルトのhazard_typesを返す。
+        
+        Returns:
+            有効なハザードタイプリスト
+        """
+        enable_large_fill_land = os.environ.get('ENABLE_LARGE_FILL_LAND', 'false').lower()
+        
+        if enable_large_fill_land == 'true':
+            return ['earthquake', 'flood', 'tsunami', 'high_tide', 'landslide', 'large_fill_land']
+        else:
+            return ['earthquake', 'flood', 'tsunami', 'high_tide', 'landslide']
+
     def get_hazard_info(
         self, 
         lat: float, 
@@ -32,7 +46,7 @@ class HazardAPIClient:
             lat: 緯度
             lon: 経度  
             datum: 座標系 ('wgs84' または 'tokyo')
-            hazard_types: 取得するハザード情報のタイプリスト。Noneの場合は全て取得。
+            hazard_types: 取得するハザード情報のタイプリスト。Noneの場合はデフォルトリストを使用。
                          利用可能: earthquake, flood, tsunami, high_tide, large_fill_land, landslide
         
         Returns:
@@ -43,6 +57,9 @@ class HazardAPIClient:
             'lon': lon,
             'datum': datum
         }
+        
+        if hazard_types is None:
+            hazard_types = self._get_default_hazard_types()
         
         if hazard_types:
             params['hazard_types'] = ','.join(hazard_types)
@@ -67,7 +84,7 @@ class HazardAPIClient:
         Args:
             input_text: 住所または緯度経度の文字列
             datum: 座標系 ('wgs84' または 'tokyo')
-            hazard_types: 取得するハザード情報のタイプリスト
+            hazard_types: 取得するハザード情報のタイプリスト。Noneの場合はデフォルトリストを使用。
         
         Returns:
             APIからのレスポンス辞書
@@ -76,6 +93,9 @@ class HazardAPIClient:
             'input': input_text,
             'datum': datum
         }
+        
+        if hazard_types is None:
+            hazard_types = self._get_default_hazard_types()
         
         if hazard_types:
             params['hazard_types'] = ','.join(hazard_types)

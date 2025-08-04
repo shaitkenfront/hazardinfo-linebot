@@ -187,6 +187,7 @@ cat response.json
 ## 外部依存関係
 
 - **外部ハザード情報REST API**: `HAZARD_MAP_API_URL`で指定されるAPI（リポジトリ: https://github.com/shaitkenfront/hazardinfo-restapi）
+  - APIの詳細仕様は [HazardInfo_API.md](HazardInfo_API.md) を参照
 - **Google Geocoding API**: 住所から座標への変換（オプション）
 - **LINE Messaging API**: チャットボット機能
 

@@ -79,7 +79,7 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
 
     # 大規模盛土造成地
     large_fill_land_data = hazards.get('large_fill_land', {})
-    if large_fill_land_data and large_fill_land_data.get("overlapped") is not None:
+    if large_fill_land_data:
         display_info['大規模盛土造成地'] = _format_hazard_output_string(
             large_fill_land_data.get("max_info"),
             large_fill_land_data.get("center_info"),
