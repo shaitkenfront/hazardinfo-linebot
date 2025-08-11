@@ -6,12 +6,18 @@ class TestLambdaFunction:
     
     @patch('lambda_function.input_parser.parse_input_type')
     @patch('lambda_function.geocoding.geocode')
-    @patch('lambda_function.hazard_info.get_all_hazard_info')
-    @patch('lambda_function.hazard_info.format_all_hazard_info_for_display')
-    def test_get_formatted_hazard_data_address(self, mock_format, mock_get_hazard, mock_geocode, mock_parse):
+    @patch('lambda_function.hazard_api_client.HazardAPIClient')
+    @patch('lambda_function.display_formatter.format_all_hazard_info_for_display')
+    def test_get_formatted_hazard_data_address(self, mock_format, mock_api_client, mock_geocode, mock_parse):
         mock_parse.return_value = ('address', '東京都新宿区')
         mock_geocode.return_value = (35.6586, 139.7454)
-        mock_get_hazard.return_value = {'flood': 'low'}
+        mock_api_instance = mock_api_client.return_value
+        mock_api_instance.get_hazard_info.return_value = {
+            'status': 'ok',
+            'hazard_info': {
+                'flood': {'max_info': 'some_flood_info'}
+            }
+        }
         mock_format.return_value = {'洪水': '低リスク'}
         
         error, data, info = get_formatted_hazard_data('東京都新宿区')
@@ -57,6 +63,7 @@ class TestLambdaFunction:
     
     @patch('lambda_function.line_handler.handle_line_event')
     def test_lambda_handler_success(self, mock_handle):
+        mock_handle.return_value = {}
         event = {
             'headers': {'x-line-signature': 'test_signature'},
             'body': 'test_body'

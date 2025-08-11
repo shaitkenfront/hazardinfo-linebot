@@ -2,7 +2,7 @@
 
 ## 1. 概要
 
-このAPIは、日本の任意の地点におけるハザード情報を提供します。住所や緯度経度を指定することで、地震発生確率、浸水深、土砂災害警戒区域、大規模盛土造成地などの情報を取得できます。
+このAPIは、日本の任意の地点におけるハザード情報を提供します。住所や緯度経度を指定することで、地震発生確率、浸水深、土砂災害警戒区域、雪崩危険箇所、大規模盛土造成地などの情報を取得できます。
 
 ## 2. エンドポイント
 
@@ -42,7 +42,7 @@ x-api-key: YOUR_API_KEY
 | :--- | :--- | :--- | :--- |
 | `datum` | `string` | 入力座標の測地系を指定します。`wgs84` (世界測地系) または `tokyo` (日本測地系) を選択できます。 | `wgs84` |
 | `hazard_types` | `string` or `array` | 取得したいハザード情報の種類をカンマ区切りの文字列または配列で指定します。指定しない場合は、すべてのハザード情報を取得します。 | `null` (すべて) |
-| `search_points` | `number` | 検索精度を指定します。`4` (高速モード) または `8` (高精度モード) を選択できます。 | `4` |
+| `precision` | `string` | 検索精度を指定します。`low` (高速モード: 中心点と8方位ピクセル調査) または `high` (高精度モード: 周辺100m密度の高いサンプリング) を選択できます。 | `low` |
 
 #### 4.2.3. 利用可能なハザードタイプ (`hazard_types`)
 
@@ -50,9 +50,12 @@ x-api-key: YOUR_API_KEY
 | :--- | :--- |
 | `earthquake` | 30年以内の震度5強以上および6強以上の地震発生確率 |
 | `flood` | 想定最大浸水深 |
+| `flood_keizoku` | 浸水継続時間 |
+| `kaokutoukai_hanran` | 家屋倒壊等氾濫想定区域（氾濫流） |
 | `tsunami` | 津波による想定浸水深 |
 | `high_tide` | 高潮による想定浸水深 |
 | `landslide` | 土砂災害警戒区域（土石流、急傾斜地、地すべり） |
+| `avalanche` | 雪崩危険箇所 |
 | `large_fill_land` | 大規模盛土造成地 |
 
 ### 4.3. リクエスト例
@@ -63,9 +66,9 @@ x-api-key: YOUR_API_KEY
   ```
   /prod/hazardinfo?lat=35.681236&lon=139.767125
   ```
-- **住所で指定し、特定のハザード情報（地震と洪水）を取得**
+- **住所で指定し、特定のハザード情報（地震と雪崩）を高精度で取得**
   ```
-  /prod/hazardinfo?input=東京都千代田区丸の内１丁目&hazard_types=earthquake,flood
+  /prod/hazardinfo?input=長野県北安曇郡白馬村&hazard_types=earthquake,avalanche&precision=high
   ```
 
 #### POSTリクエスト
@@ -73,11 +76,11 @@ x-api-key: YOUR_API_KEY
 - **リクエストボディ**
   ```json
   {
-    "lat": 35.681236,
-    "lon": 139.767125,
+    "lat": 36.7000,
+    "lon": 137.8500,
     "datum": "wgs84",
-    "hazard_types": ["tsunami", "landslide"],
-    "search_points": 8
+    "hazard_types": ["earthquake", "avalanche"],
+    "precision": "high"
   }
   ```
 
@@ -88,28 +91,24 @@ x-api-key: YOUR_API_KEY
 ```json
 {
   "coordinates": {
-    "latitude": 35.681236,
-    "longitude": 139.767125
+    "latitude": 36.7000,
+    "longitude": 137.8500
   },
-  "source": "住所: 東京都千代田区丸の内１丁目",
-  "input_type": "address",
-  "requested_hazard_types": ["earthquake", "flood"],
+  "source": "座標: 36.7000, 137.8500 (入力座標系: wgs84)",
+  "input_type": "latlon",
+  "requested_hazard_types": ["earthquake", "avalanche"],
   "hazard_info": {
     "jshis_prob_50": {
-      "max_prob": "3%",
-      "center_prob": "3%"
+      "max_prob": 0.18,
+      "center_prob": 0.15
     },
     "jshis_prob_60": {
-      "max_prob": "1%",
-      "center_prob": "1%"
+      "max_prob": 0.03,
+      "center_prob": 0.02
     },
-    "inundation_depth": {
-      "max_info": "0.5m未満",
-      "center_info": "浸水なし"
-    },
-    "large_fill_land": {
-      "max_info": "あり",
-      "center_info": "あり"
+    "avalanche": {
+      "max_info": "該当あり",
+      "center_info": "該当あり"
     }
   },
   "status": "success"
@@ -137,7 +136,7 @@ x-api-key: YOUR_API_KEY
 {
   "error": "Invalid hazard_types parameter",
   "message": "Invalid hazard types: ['invalid_type']",
-  "valid_types": ["earthquake", "flood", "tsunami", "high_tide", "landslide", "large_fill_land"]
+  "valid_types": ["earthquake", "flood", "flood_keizoku", "kaokutoukai_hanran", "tsunami", "high_tide", "landslide", "avalanche", "large_fill_land"]
 }
 ```
 
@@ -159,8 +158,28 @@ x-api-key: YOUR_API_KEY
 }
 ```
 
-## 6. 注意事項
+## 6. 検索精度の詳細
+
+### 6.1. 高速モード (`precision=low`)
+
+- **調査方式:** 中心点とその周囲8方位のピクセル（合計9ピクセル）を調査
+- **パフォーマンス:** 約3-5秒の高速応答
+- **精度:** 基本的なハザード情報を取得
+- **適用場面:** 初期調査、大量データ処理、リアルタイムアプリケーション
+
+### 6.2. 高精度モード (`precision=high`)
+
+- **調査方式:** 周辺100m範囲内で16点の密度の高いサンプリング
+- **パフォーマンス:** 約7-10秒の詳細応答
+- **精度:** より詳細で正確なハザード情報を取得
+- **適用場面:** 詳細分析、専門的調査、重要な意思決定
+
+## 7. 注意事項
 
 - **大規模盛土造成地情報について:** この情報は、`hazard_types` パラメータに `large_fill_land` を含まれている場合にのみ提供されます。
-- **パフォーマンス:** `search_points` パラメータを `8` (高精度モード) に設定すると、レスポンスタイムが長くなる可能性があります。
-- **データソース:** 本APIが提供する情報は、国土地理院やJ-SHISなどの公的機関のデータを基にしていますが、情報の正確性や完全性を保証するものではありません。最終的な判断は、公的機関が発表する一次情報をご確認ください。
+- **雪崩危険箇所について:** この情報は国土数値情報の雪崩危険箇所データ（P07）をもとに提供され、主に積雪地域（北海道、東北、中部山間部、北陸など）で利用可能です。判定は「該当あり」/「該当なし」の二値で行われます。
+- **パフォーマンス:**
+  - `precision=low` (高速モード): 約3-5秒の応答時間、中心点と8方位ピクセル調査
+  - `precision=high` (高精度モード): 約7-10秒の応答時間、周辺100m範囲内の密度の高いサンプリング
+- **後方互換性:** 旧パラメータ `search_points` は延長サポートされていますが、新しいシステムでは `precision` パラメータの使用を推奨します。
+- **データソース:** 本 APIが提供する情報は、国土地理院やJ-SHISなどの公的機関のデータを基にしていますが、情報の正確性や完全性を保証するものではありません。最終的な判断は、公的機関が発表する一次情報をご確認ください。

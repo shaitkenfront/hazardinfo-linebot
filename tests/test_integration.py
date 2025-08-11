@@ -7,11 +7,18 @@ from lambda_function import lambda_handler
 class TestIntegration:
     
     @responses.activate
-    @patch('lambda_function.hazard_info.get_all_hazard_info')
-    @patch('lambda_function.hazard_info.format_all_hazard_info_for_display')
-    def test_full_workflow_address_input(self, mock_format, mock_get_hazard):
+    @patch('lambda_function.hazard_api_client.HazardAPIClient')
+    @patch('lambda_function.display_formatter.format_all_hazard_info_for_display')
+    def test_full_workflow_address_input(self, mock_format, mock_api_client):
         # モックの設定
-        mock_get_hazard.return_value = {'flood': 'low', 'landslide': 'medium'}
+        mock_api_instance = mock_api_client.return_value
+        mock_api_instance.get_hazard_info.return_value = {
+            'status': 'ok',
+            'hazard_info': {
+                'flood': {'max_info': 'some_flood_info'},
+                'landslide': {'max_info': 'some_landslide_info'}
+            }
+        }
         mock_format.return_value = {'洪水': '低リスク', '土砂災害': '中リスク'}
         
         # Geocoding APIのモック
@@ -51,7 +58,7 @@ class TestIntegration:
                         "type": "text",
                         "text": "東京都新宿区"
                     },
-                    "replyToken": "test_reply_token"
+                    "replyToken": "valid_reply_token"
                 }
             ]
         }

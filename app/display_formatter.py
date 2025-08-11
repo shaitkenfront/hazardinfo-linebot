@@ -85,6 +85,32 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
             large_fill_land_data.get("center_info"),
             no_data_str="該当なし")
 
+    # 浸水継続時間
+    flood_keizoku_data = hazards.get('flood_keizoku', {})
+    if flood_keizoku_data:
+        display_info['浸水継続時間'] = _format_hazard_output_string(
+            flood_keizoku_data.get('max_info'),
+            flood_keizoku_data.get('center_info'),
+            no_data_str="浸水想定なし"
+        )
+
+    # 家屋倒壊等氾濫想定区域
+    kaokutoukai_data = hazards.get('kaokutoukai_hanran', {})
+    if kaokutoukai_data:
+        display_info['家屋倒壊等氾濫想定区域'] = _format_hazard_output_string(
+            kaokutoukai_data.get('max_info'),
+            kaokutoukai_data.get('center_info'),
+            no_data_str="該当なし"
+        )
+
+    # 雪崩危険箇所
+    avalanche_data = hazards.get('avalanche', {})
+    if avalanche_data:
+        display_info['雪崩危険箇所'] = _format_hazard_output_string(
+            avalanche_data.get('max_info'),
+            avalanche_data.get('center_info'),
+            no_data_str="該当なし"
+        )
 
     # 土砂災害警戒・特別警戒区域
     landslide_hazard_data = hazards.get('landslide_hazard', {})

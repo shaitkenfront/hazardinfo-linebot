@@ -15,22 +15,44 @@ class HazardAPIClient:
             api_url: ハザード情報APIのベースURL。Noneの場合は環境変数HAZARD_MAP_API_URLから取得。
         """
         self.api_url = api_url or os.environ.get('HAZARD_MAP_API_URL')
+        self.api_key = os.environ.get('HAZARD_MAP_API_KEY')
         if not self.api_url:
             raise ValueError("API URL is required. Set HAZARD_MAP_API_URL environment variable or pass api_url parameter.")
 
+    def _make_request(self, params: Dict) -> Dict:
+        """
+        APIへのリクエストを送信する共通メソッド。
+        """
+        headers = {}
+        if self.api_key:
+            headers['x-api-key'] = self.api_key
+
+        try:
+            response = requests.get(self.api_url, params=params, headers=headers, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching hazard info from API: {e}")
+            return self._get_error_response(str(e))
+
     def _get_default_hazard_types(self) -> List[str]:
         """
-        環境変数ENABLE_LARGE_FILL_LANDに基づいてデフォルトのhazard_typesを返す。
+        デフォルトで取得するすべてのハザードタイプのリストを返す。
         
         Returns:
             有効なハザードタイプリスト
         """
-        enable_large_fill_land = os.environ.get('ENABLE_LARGE_FILL_LAND', 'false').lower()
-        
-        if enable_large_fill_land == 'true':
-            return ['earthquake', 'flood', 'tsunami', 'high_tide', 'landslide', 'large_fill_land']
-        else:
-            return ['earthquake', 'flood', 'tsunami', 'high_tide', 'landslide']
+        return [
+            'earthquake', 
+            'flood', 
+            'flood_keizoku', 
+            'kaokutoukai_hanran',
+            'tsunami', 
+            'high_tide', 
+            'landslide', 
+            'avalanche',
+            'large_fill_land'
+        ]
 
     def get_hazard_info(
         self, 
@@ -47,7 +69,7 @@ class HazardAPIClient:
             lon: 経度  
             datum: 座標系 ('wgs84' または 'tokyo')
             hazard_types: 取得するハザード情報のタイプリスト。Noneの場合はデフォルトリストを使用。
-                         利用可能: earthquake, flood, tsunami, high_tide, large_fill_land, landslide
+                         利用可能: earthquake, flood, flood_keizoku, kaokutoukai_hanran, tsunami, high_tide, landslide, avalanche, large_fill_land
         
         Returns:
             APIからのレスポンス辞書
@@ -64,13 +86,7 @@ class HazardAPIClient:
         if hazard_types:
             params['hazard_types'] = ','.join(hazard_types)
         
-        try:
-            response = requests.get(self.api_url, params=params, timeout=30)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching hazard info from API: {e}")
-            return self._get_error_response(str(e))
+        return self._make_request(params)
     
     def get_hazard_info_by_input(
         self, 
@@ -100,13 +116,7 @@ class HazardAPIClient:
         if hazard_types:
             params['hazard_types'] = ','.join(hazard_types)
         
-        try:
-            response = requests.get(self.api_url, params=params, timeout=30)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching hazard info from API: {e}")
-            return self._get_error_response(str(e))
+        return self._make_request(params)
     
     def _get_error_response(self, error_message: str) -> Dict:
         """
@@ -157,24 +167,40 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_prob': jshis_60.get('center_prob')
         }
     
-    # 浸水深情報の変換
-    inundation = hazard_info.get('inundation_depth', {})
-    if inundation:
+    # 浸水深情報の変換 (APIレスポンスキー: flood -> 旧キー: inundation_depth)
+    flood = hazard_info.get('flood', {})
+    if flood:
         legacy_format['inundation_depth'] = {
-            'max_info': inundation.get('max_info'),
-            'center_info': inundation.get('center_info')
+            'max_info': flood.get('max_info'),
+            'center_info': flood.get('center_info')
         }
     
-    # 津波浸水想定の変換
-    tsunami = hazard_info.get('tsunami_inundation', {})
+    # 浸水継続時間の変換
+    flood_keizoku = hazard_info.get('flood_keizoku', {})
+    if flood_keizoku:
+        legacy_format['flood_keizoku'] = {
+            'max_info': flood_keizoku.get('max_info'),
+            'center_info': flood_keizoku.get('center_info')
+        }
+
+    # 家屋倒壊等氾濫想定区域の変換
+    kaokutoukai = hazard_info.get('kaokutoukai_hanran', {})
+    if kaokutoukai:
+        legacy_format['kaokutoukai_hanran'] = {
+            'max_info': kaokutoukai.get('max_info'),
+            'center_info': kaokutoukai.get('center_info')
+        }
+
+    # 津波浸水想定の変換 (APIレスポンスキー: tsunami -> 旧キー: tsunami_inundation)
+    tsunami = hazard_info.get('tsunami', {})
     if tsunami:
         legacy_format['tsunami_inundation'] = {
             'max_info': tsunami.get('max_info'),
             'center_info': tsunami.get('center_info')
         }
     
-    # 高潮浸水想定の変換
-    high_tide = hazard_info.get('hightide_inundation', {})
+    # 高潮浸水想定の変換 (APIレスポンスキー: high_tide -> 旧キー: hightide_inundation)
+    high_tide = hazard_info.get('high_tide', {})
     if high_tide:
         legacy_format['hightide_inundation'] = {
             'max_info': high_tide.get('max_info'),
@@ -189,8 +215,8 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_info': large_fill.get('center_info')
         }
     
-    # 土砂災害情報の変換
-    landslide = hazard_info.get('landslide_hazard', {})
+    # 土砂災害情報の変換 (APIレスポンスキー: landslide -> 旧キー: landslide_hazard)
+    landslide = hazard_info.get('landslide', {})
     if landslide:
         legacy_format['landslide_hazard'] = {
             'debris_flow': {
@@ -205,6 +231,14 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
                 'max_info': landslide.get('landslide', {}).get('max_info'),
                 'center_info': landslide.get('landslide', {}).get('center_info')
             }
+        }
+    
+    # 雪崩危険箇所の変換
+    avalanche = hazard_info.get('avalanche', {})
+    if avalanche:
+        legacy_format['avalanche'] = {
+            'max_info': avalanche.get('max_info'),
+            'center_info': avalanche.get('center_info')
         }
     
     return legacy_format

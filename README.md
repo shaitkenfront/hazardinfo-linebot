@@ -53,6 +53,7 @@ LINE Bot → API Gateway → AWS Lambda → 外部ハザード情報REST API
 ```bash
 # 必須
 HAZARD_MAP_API_URL=https://your-hazard-api-endpoint.com
+HAZARD_MAP_API_KEY=your_hazard_api_key
 LINE_CHANNEL_ACCESS_TOKEN=your_line_access_token
 LINE_CHANNEL_SECRET=your_line_channel_secret
 
@@ -187,7 +188,7 @@ cat response.json
 ## 外部依存関係
 
 - **外部ハザード情報REST API**: `HAZARD_MAP_API_URL`で指定されるAPI（リポジトリ: https://github.com/shaitkenfront/hazardinfo-restapi）
-  - APIの詳細仕様は [HazardInfo_API.md](HazardInfo_API.md) を参照
+  - APIの詳細仕様は [API_SPECIFICATION.md](API_SPECIFICATION.md) を参照
 - **Google Geocoding API**: 住所から座標への変換（オプション）
 - **LINE Messaging API**: チャットボット機能
 
