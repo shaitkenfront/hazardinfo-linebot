@@ -46,6 +46,13 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
     )
     display_info['30年以内に震度5強以上の地震が起こる確率'] = prob_50_str
 
+    prob_55_data = hazards.get('jshis_prob_55', {})
+    prob_55_str = _format_hazard_output_string(
+        _format_jshis_probability(prob_55_data.get('max_prob')),
+        _format_jshis_probability(prob_55_data.get('center_prob'))
+    )
+    display_info['30年以内に震度6弱以上の地震が起こる確率'] = prob_55_str
+
     prob_60_data = hazards.get('jshis_prob_60', {})
     prob_60_str = _format_hazard_output_string(
         _format_jshis_probability(prob_60_data.get('max_prob')),
@@ -105,12 +112,11 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
 
     # 雪崩危険箇所
     avalanche_data = hazards.get('avalanche', {})
-    if avalanche_data:
-        display_info['雪崩危険箇所'] = _format_hazard_output_string(
-            avalanche_data.get('max_info'),
-            avalanche_data.get('center_info'),
-            no_data_str="該当なし"
-        )
+    display_info['雪崩危険箇所'] = _format_hazard_output_string(
+        avalanche_data.get('max_info'),
+        avalanche_data.get('center_info'),
+        no_data_str="該当なし"
+    )
 
     # 土砂災害警戒・特別警戒区域
     landslide_hazard_data = hazards.get('landslide_hazard', {})

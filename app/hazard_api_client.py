@@ -159,6 +159,13 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'max_prob': jshis_50.get('max_prob'),
             'center_prob': jshis_50.get('center_prob')
         }
+
+    jshis_55 = hazard_info.get('jshis_prob_55', {})
+    if jshis_55:
+        legacy_format['jshis_prob_55'] = {
+            'max_prob': jshis_55.get('max_prob'),
+            'center_prob': jshis_55.get('center_prob')
+        }
     
     jshis_60 = hazard_info.get('jshis_prob_60', {})
     if jshis_60:

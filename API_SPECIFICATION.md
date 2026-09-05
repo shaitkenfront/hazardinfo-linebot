@@ -48,7 +48,7 @@ x-api-key: YOUR_API_KEY
 
 | 値 | 説明 |
 | :--- | :--- |
-| `earthquake` | 30年以内の震度5強以上および6強以上の地震発生確率 |
+| `earthquake` | 30年以内の震度5強以上、6弱以上および6強以上の地震発生確率 |
 | `flood` | 想定最大浸水深 |
 | `flood_keizoku` | 浸水継続時間 |
 | `kaokutoukai_hanran` | 家屋倒壊等氾濫想定区域（氾濫流） |
@@ -101,6 +101,10 @@ x-api-key: YOUR_API_KEY
     "jshis_prob_50": {
       "max_prob": 0.18,
       "center_prob": 0.15
+    },
+    "jshis_prob_55": {
+      "max_prob": 0.08,
+      "center_prob": 0.06
     },
     "jshis_prob_60": {
       "max_prob": 0.03,
