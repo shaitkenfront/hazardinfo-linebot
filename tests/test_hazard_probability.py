@@ -21,6 +21,29 @@ def test_convert_api_response_includes_shindo_6_lower_probability():
     }
 
 
+def test_convert_api_response_maps_current_hazard_keys():
+    response = {
+        'status': 'success',
+        'hazard_info': {
+            'inundation_depth': {'max_info': '3m以上5m未満', 'center_info': '3m以上5m未満'},
+            'tsunami_inundation': {'max_info': '1m未満', 'center_info': '1m未満'},
+            'hightide_inundation': {'max_info': '0.5m未満', 'center_info': '0.5m未満'},
+            'landslide_hazard': {
+                'debris_flow': {'max_info': '区域内', 'center_info': '区域内'},
+                'steep_slope': {'max_info': '該当なし', 'center_info': '該当なし'},
+                'landslide': {'max_info': '該当なし', 'center_info': '該当なし'},
+            },
+        },
+    }
+
+    converted = convert_api_response_to_legacy_format(response)
+
+    assert converted['inundation_depth']['max_info'] == '3m以上5m未満'
+    assert converted['tsunami_inundation']['max_info'] == '1m未満'
+    assert converted['hightide_inundation']['max_info'] == '0.5m未満'
+    assert converted['landslide_hazard']['debris_flow']['max_info'] == '区域内'
+
+
 def test_display_order_places_shindo_6_lower_between_5_strong_and_6_strong():
     hazards = {
         'jshis_prob_50': {'max_prob': 0.18, 'center_prob': 0.15},

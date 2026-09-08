@@ -174,8 +174,8 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_prob': jshis_60.get('center_prob')
         }
     
-    # 浸水深情報の変換 (APIレスポンスキー: flood -> 旧キー: inundation_depth)
-    flood = hazard_info.get('flood', {})
+    # 浸水深情報の変換 (APIレスポンスキー: inundation_depth -> 旧キー: inundation_depth)
+    flood = hazard_info.get('inundation_depth', {})
     if flood:
         legacy_format['inundation_depth'] = {
             'max_info': flood.get('max_info'),
@@ -198,16 +198,16 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_info': kaokutoukai.get('center_info')
         }
 
-    # 津波浸水想定の変換 (APIレスポンスキー: tsunami -> 旧キー: tsunami_inundation)
-    tsunami = hazard_info.get('tsunami', {})
+    # 津波浸水想定の変換 (APIレスポンスキー: tsunami_inundation -> 旧キー: tsunami_inundation)
+    tsunami = hazard_info.get('tsunami_inundation', {})
     if tsunami:
         legacy_format['tsunami_inundation'] = {
             'max_info': tsunami.get('max_info'),
             'center_info': tsunami.get('center_info')
         }
     
-    # 高潮浸水想定の変換 (APIレスポンスキー: high_tide -> 旧キー: hightide_inundation)
-    high_tide = hazard_info.get('high_tide', {})
+    # 高潮浸水想定の変換 (APIレスポンスキー: hightide_inundation -> 旧キー: hightide_inundation)
+    high_tide = hazard_info.get('hightide_inundation', {})
     if high_tide:
         legacy_format['hightide_inundation'] = {
             'max_info': high_tide.get('max_info'),
@@ -222,8 +222,8 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_info': large_fill.get('center_info')
         }
     
-    # 土砂災害情報の変換 (APIレスポンスキー: landslide -> 旧キー: landslide_hazard)
-    landslide = hazard_info.get('landslide', {})
+    # 土砂災害情報の変換 (APIレスポンスキー: landslide_hazard -> 旧キー: landslide_hazard)
+    landslide = hazard_info.get('landslide_hazard', {})
     if landslide:
         legacy_format['landslide_hazard'] = {
             'debris_flow': {
