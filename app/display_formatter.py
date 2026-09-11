@@ -101,12 +101,21 @@ def format_all_hazard_info_for_display(hazards: Dict[str, Any]) -> Dict[str, str
             no_data_str="浸水想定なし"
         )
 
-    # 家屋倒壊等氾濫想定区域
+    # 家屋倒壊等氾濫想定区域（氾濫流）
     kaokutoukai_data = hazards.get('kaokutoukai_hanran', {})
     if kaokutoukai_data:
-        display_info['家屋倒壊等氾濫想定区域'] = _format_hazard_output_string(
+        display_info['家屋倒壊等氾濫想定区域（氾濫流）'] = _format_hazard_output_string(
             kaokutoukai_data.get('max_info'),
             kaokutoukai_data.get('center_info'),
+            no_data_str="判定なし"
+        )
+
+    # 家屋倒壊等氾濫想定区域（河岸侵食）
+    kaokutoukai_kagan_data = hazards.get('kaokutoukai_kagan', {})
+    if kaokutoukai_kagan_data:
+        display_info['家屋倒壊等氾濫想定区域（河岸侵食）'] = _format_hazard_output_string(
+            kaokutoukai_kagan_data.get('max_info'),
+            kaokutoukai_kagan_data.get('center_info'),
             no_data_str="該当なし"
         )
 

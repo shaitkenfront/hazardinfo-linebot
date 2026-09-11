@@ -30,7 +30,8 @@ def get_formatted_hazard_data(text: str) -> tuple[str, dict | None]:
     # ハザード情報を取得 (REST API経由)
     try:
         api_client = hazard_api_client.HazardAPIClient()
-        api_response = api_client.get_hazard_info(lat, lon)
+        # 家屋倒壊等氾濫想定区域を周辺100mの目安として取得するため高精度モードを使用
+        api_response = api_client.get_hazard_info(lat, lon, precision='high')
         raw_hazards = hazard_api_client.convert_api_response_to_legacy_format(api_response)
     except Exception as e:
         print(f"Error fetching hazard info from REST API: {e}")

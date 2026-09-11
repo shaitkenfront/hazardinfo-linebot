@@ -47,6 +47,7 @@ class HazardAPIClient:
             'flood', 
             'flood_keizoku', 
             'kaokutoukai_hanran',
+            'kaokutoukai_kagan',
             'tsunami', 
             'high_tide', 
             'landslide', 
@@ -59,7 +60,8 @@ class HazardAPIClient:
         lat: float, 
         lon: float, 
         datum: str = 'wgs84',
-        hazard_types: Optional[List[str]] = None
+        hazard_types: Optional[List[str]] = None,
+        precision: str = 'low'
     ) -> Dict:
         """
         指定された座標のハザード情報を取得する。
@@ -69,7 +71,8 @@ class HazardAPIClient:
             lon: 経度  
             datum: 座標系 ('wgs84' または 'tokyo')
             hazard_types: 取得するハザード情報のタイプリスト。Noneの場合はデフォルトリストを使用。
-                         利用可能: earthquake, flood, flood_keizoku, kaokutoukai_hanran, tsunami, high_tide, landslide, avalanche, large_fill_land
+                         利用可能: earthquake, flood, flood_keizoku, kaokutoukai_hanran, kaokutoukai_kagan, tsunami, high_tide, landslide, avalanche, large_fill_land
+            precision: 検索精度 ('low' または 'high')
         
         Returns:
             APIからのレスポンス辞書
@@ -77,7 +80,8 @@ class HazardAPIClient:
         params = {
             'lat': lat,
             'lon': lon,
-            'datum': datum
+            'datum': datum,
+            'precision': precision
         }
         
         if hazard_types is None:
@@ -92,7 +96,8 @@ class HazardAPIClient:
         self, 
         input_text: str, 
         datum: str = 'wgs84',
-        hazard_types: Optional[List[str]] = None
+        hazard_types: Optional[List[str]] = None,
+        precision: str = 'low'
     ) -> Dict:
         """
         住所または座標文字列からハザード情報を取得する。
@@ -101,13 +106,15 @@ class HazardAPIClient:
             input_text: 住所または緯度経度の文字列
             datum: 座標系 ('wgs84' または 'tokyo')
             hazard_types: 取得するハザード情報のタイプリスト。Noneの場合はデフォルトリストを使用。
+            precision: 検索精度 ('low' または 'high')
         
         Returns:
             APIからのレスポンス辞書
         """
         params = {
             'input': input_text,
-            'datum': datum
+            'datum': datum,
+            'precision': precision
         }
         
         if hazard_types is None:
@@ -190,12 +197,20 @@ def convert_api_response_to_legacy_format(api_response: Dict) -> Dict:
             'center_info': flood_keizoku.get('center_info')
         }
 
-    # 家屋倒壊等氾濫想定区域の変換
+    # 家屋倒壊等氾濫想定区域（氾濫流）の変換
     kaokutoukai = hazard_info.get('kaokutoukai_hanran', {})
     if kaokutoukai:
         legacy_format['kaokutoukai_hanran'] = {
             'max_info': kaokutoukai.get('max_info'),
             'center_info': kaokutoukai.get('center_info')
+        }
+
+    # 家屋倒壊等氾濫想定区域（河岸侵食）の変換
+    kaokutoukai_kagan = hazard_info.get('kaokutoukai_kagan', {})
+    if kaokutoukai_kagan:
+        legacy_format['kaokutoukai_kagan'] = {
+            'max_info': kaokutoukai_kagan.get('max_info'),
+            'center_info': kaokutoukai_kagan.get('center_info')
         }
 
     # 津波浸水想定の変換 (APIレスポンスキー: tsunami_inundation -> 旧キー: tsunami_inundation)

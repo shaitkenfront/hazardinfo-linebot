@@ -25,6 +25,9 @@ class TestLambdaFunction:
         assert error is None
         assert data == {'洪水': '低リスク'}
         assert info == '「東京都新宿区」周辺のハザード情報です。'
+        mock_api_instance.get_hazard_info.assert_called_once_with(
+            35.6586, 139.7454, precision='high'
+        )
     
     @patch('lambda_function.input_parser.parse_input_type')
     def test_get_formatted_hazard_data_invalid_latlon(self, mock_parse):
